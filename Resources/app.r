@@ -49,7 +49,7 @@ ig_url <- "https://raw.githubusercontent.com/DataCapstone/Data-Capstone/master/I
 source_github(ig_url)
 
 # import county overview 
-co_url <- "https://raw.githubusercontent.com/DataCapstone/Data-Capstone/master/Raw-Data/county_comparison_2.R"
+co_url <- "https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Build%20App/aggregation_sanky_gra163.R"
 source_github(co_url)
 
 # load the donutzz function using the RAW link
