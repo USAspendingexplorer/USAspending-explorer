@@ -375,15 +375,18 @@ server <- function(input, output) {
   
   output$top <- renderInfoBox({
     
-    top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
     
     if (input$county == "NY State") {
+      
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name), FUN = sum)
       
       top.rec.2 <- top.rec
       top.rec.3 <- arrange(top.rec.2 , desc(x))
       top <- top.rec.3[1,]$Group.1
       
     } else {
+      
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
       
       top.rec.2 <- filter(top.rec , Group.2 == input$county)
       top.rec.3 <- arrange(top.rec.2 , desc(x))
@@ -399,15 +402,18 @@ server <- function(input, output) {
   
   output$top.dollars <- renderInfoBox({
     
-    top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
     
     if (input$county == "NY State") {
+      
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name), FUN = sum)
       
       top.rec.2 <- top.rec
       top.rec.3 <- arrange(top.rec.2 , desc(x))
       top.dollars <- top.rec.3[1,]$x
       
     } else {
+      
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
       
       top.rec.2 <- filter(top.rec , Group.2 == input$county)
       top.rec.3 <- arrange(top.rec.2 , desc(x))
@@ -423,15 +429,18 @@ server <- function(input, output) {
   
   output$top.num <- renderInfoBox({
     
-    top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
     
     if (input$county == "NY State") {
+      
+      top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name), FUN = length )
       
       top.rec.num.2 <- top.rec.num
       top.rec.num.3 <- arrange(top.rec.num.2 , desc(x))
       top.num <- top.rec.num.3[1,]$x  
       
     } else {
+      
+      top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
       
       top.rec.num.2 <- filter(top.rec.num , Group.2 == input$county)
       top.rec.num.3 <- arrange(top.rec.num.2 , desc(x))

@@ -23,19 +23,13 @@ gra16.3 <- readRDS(gzcon(url("https://github.com/USAspendingexplorer/USAspending
 
 ```
 
-
-```{r}
-
-top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
-
-top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
-
-```
+## Shiny Info Boxes
 
 ```{r}
 
 ui <- fluidPage(
   
+  #Shiny select, includes option for whole state
   selectInput( inputId='county', 
                label = "Pick a county",
                choices= c("NY State", sort(unique(gra16.3$county))),
@@ -51,20 +45,29 @@ ui <- fluidPage(
   )
 )
 
+
 server <- function(input, output) {
   
+  #Code to print name of top recipient
   output$top <- renderInfoBox({
     
-    top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
     
     if (input$county == "NY State") {
       
+      #for whole state: data frame with aggregation of funding by recipient
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name), FUN = sum)
+     
+      #arrange data frame by amount of funding then pick out top row, which will be the recipient that gets the most funding, info box prints          that recipient's name 
       top.rec.2 <- top.rec
       top.rec.3 <- arrange(top.rec.2 , desc(x))
       top <- top.rec.3[1,]$Group.1
       
     } else {
       
+      #for one county: data frame with aggregation of funding by recipient and county
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
+    
+      #arrange and pick out top
       top.rec.2 <- filter(top.rec , Group.2 == input$county)
       top.rec.3 <- arrange(top.rec.2 , desc(x))
       top <- top.rec.3[1,]$Group.1
@@ -77,17 +80,22 @@ server <- function(input, output) {
     )
   })
   
+  #similar to above code but prints column labeled 'x' instead of 'Group.1' so prints amount of funding top recipient gets rather than name
   output$top.dollars <- renderInfoBox({
     
-    top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
+    
     
     if (input$county == "NY State") {
+      
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name), FUN = sum)
       
       top.rec.2 <- top.rec
       top.rec.3 <- arrange(top.rec.2 , desc(x))
       top.dollars <- top.rec.3[1,]$x
       
     } else {
+      
+      top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
       
       top.rec.2 <- filter(top.rec , Group.2 == input$county)
       top.rec.3 <- arrange(top.rec.2 , desc(x))
@@ -101,17 +109,21 @@ server <- function(input, output) {
     )
   })
   
+  #similar to above code but aggregates with function length instead of sum to count how many transactions a particular recipient is a part of
   output$top.num <- renderInfoBox({
     
-    top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
     
     if (input$county == "NY State") {
+      
+      top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name), FUN = length )
       
       top.rec.num.2 <- top.rec.num
       top.rec.num.3 <- arrange(top.rec.num.2 , desc(x))
       top.num <- top.rec.num.3[1,]$x  
       
     } else {
+      
+      top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
       
       top.rec.num.2 <- filter(top.rec.num , Group.2 == input$county)
       top.rec.num.3 <- arrange(top.rec.num.2 , desc(x))
