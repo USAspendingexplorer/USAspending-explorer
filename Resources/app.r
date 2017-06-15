@@ -5,11 +5,11 @@
 #
 
 # Load necessary packages
-library(ggthemes)
+library( ggthemes)
 library( shiny )
 library( shinydashboard )
 library( leaflet )
-library(geojsonio )
+library( geojsonio )
 library( magrittr )
 library( scales )
 library( htmltools )
@@ -44,20 +44,13 @@ source_github( leaflet_url )
 fancy_table_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Build%20App/fancy_table.r"
 source_github( fancy_table_url )
 
-# import donuts
-ig_url <- "https://raw.githubusercontent.com/DataCapstone/Data-Capstone/master/Ignacio/donutzz.R"
-source_github(ig_url)
-
 # import county overview 
 co_url <- "https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Build%20App/aggregation_sanky_gra163.R"
 source_github(co_url)
 
-# load the donutzz function using the RAW link
-census_url <- "https://raw.githubusercontent.com/icps86/Functions/master/krzycensuz.r"
+# load the census function using the RAW link
+census_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Build%20App/census_comparator.R"
 source_github( census_url )
-
-# normalized census
-NYcen_norm <- readRDS( gzcon(url("https://github.com/DataCapstone/Data-Capstone/blob/master/Raw-Data/NYcen_norm.RDS?raw=true")))
 
 # import small multiples aggregated data
 agg_url <- "https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Build%20App/small_multiples_aggregated_data.R"
@@ -254,13 +247,10 @@ body <- dashboardBody(
                , shiny::p("The user quickly finds that Onondaga is ranked 13th in total grants ($101,573,642) but 18th in per capita federal grants ($216.9) received. When looking at total grants, Onondaga is similar to Nassau ($107,817,884.25) and Cattaraugus ($97,653,885), however, Nassau receives much less on a per capita as compared to Onondaga while Cattaraugus receives much more. When looking only at per capita grants received, counties like St. Lawrence ($256.98) and Richmond ($296.13) are receiving similar amounts to Onondaga.")
                , shiny::p("These insights have given Ms. Garcia potential counties to compare Onondaga with.  To find out more about where funding is coming from and who is receiving it within Onondaga, she moves on to the next tab.")
                , h3( strong("2. Exploring the Flow of Funds using the 'Explore' Tab") )
-               #, h4(em("General Picture of NY Federal Funding"))
                , shiny::p("The Flow of Funds diagram allows Ms. Garcia to see the relationship between funding agencies (to the left) and recipients (to the right) within Onondaga. She may also choose to see this diagram at the State level and for other counties.")
                , shiny::p("Ms Garcia quickly realizes that the Health and Human Services Agency (HHS) is the dominant funder of project grants for Onondaga County, and the money is primarily going into local higher education institutions and non-for-profits. Reflecting on this information, she realizes that the clear dominance of higher education institutions as recipients of federal grants in Onondaga county can be explained by the prominence of local higher education institutions like Syracuse University. Many questions arise for Ms. Garcia. Do other counties with big universities receive as much grant money as Onondaga? Are those grants coming from the same main funding agencies?")
                , shiny::p("Ms. Garcia also remembers that Rensselaer county was the top per capita grants recipient in NY State and decides to explore how grants are flowing in that particular county. She finds that HHS is again the main funding agency, however and contrary to Onondaga, HHS funds are delivered primarily to non-for-profit organizations in Rensselaer.")
                , shiny::p("St. Lawrence, which was close to Onondaga in per capita spending, has a very different structure. In St. Lawrence, Transportation is the main funding agency and government institutions are the main recipients of these funds. Why is St. Lawrence receiving more money from Transportation? How similar are St. Lawrence and Onondaga in terms of their demographics? What other similar counties should be explored?")
-               #, shiny::p("Initially, the user wants to develop a general picture of federal funding in New York state - both in terms of total funding and per capita funding in each county. To do this, they create a data table and map. They exclude all funding going to the New York state government because those funds will likely be redistributed to localities by the state. They then aggregate federal funding amount by county. Finally, they bring in population data on each county using the Census API in order to generate per capita funding. From this map they are able to identify counties they would be interested in comparing. Additionally, the user wants to understand where is funding coming from and who is receiving for the State of NY. To have a better idea of this, they create two donut charts by aggregating the money by funding agency and recipient type.")
-               #, h4(em("Examine Federal Grants"))
                , shiny::p("After establishing a general picture of funding in New York, the user hopes to compare what kind of federal funding exists within each county. They choose counties based on their own knowledge or county demographics. First, they examine how much of the federal funding going to each county is in the form of project grants (because these awards are assigned through an open competitive process). They use the variable assistance type to hone in on spending from project grants versus spending from other types of grants such as block or formula grants. They assume that counties who have a large amount of their funding coming from project grants are successfully finding and applying for competitive opportunities while counties with low project grant funding may be missing out on potential awards. The next step is to drill down the analysis for a better understanding of these awards.")
                , h3( strong( "3. Comparing Counties using the 'Compare' Tab" ) )
                , shiny::p("The County comparator tool offers Ms. Garcia key visuals that can help her to answer these questions. In this tab, the user finds a dynamic county demographic visualization, which helps her better understand how comparable the counties she is interested in examining are based on their population size, median household income and the percentage of the population which are living below the federal poverty level.")
@@ -271,13 +261,12 @@ body <- dashboardBody(
                , h3( strong( "4. Looking at Specific Project Grants" ) )
                , shiny::p("In order to understand why Orange and St. Lawrence counties are getting more grant funding from the Department of Transportation and why Orange county gets more funding from the Department of Education than Onondaga is, Ms Garcia needs to drill down further. To do so, Ms Garcia uses the Federal Spending Program table in this tab. This is a dynamic table that shows the specific grants going to each county and allows the user to filter by keywords in order to find specific funding programs.")
                , h4(em("Transportation Programs"))
-               # , shiny::p("Next, they compare the recipients of project grants within each county and determine which agencies are funding those recipients. For this part of their analysis they only look at positive outlays of funding because they are primarily interested in counties which are bringing in funds. To consider project grants going to different sectors within each county, the user works with the variable recipient category type. They focus on recipients because a county may appear to have much of its funding coming from project grants, but those grants may be going almost exclusively to one type of institution.")
                , shiny::p("After filtering through the grants, Ms Garcia finds out that the Department of Transportation is providing large sums of money to St. Lawrence and Orange counties for a Program described as “Airport improvement Program”, while Onondaga is not receiving nearly as much. While this could mean that the airports in Onondaga do not need as much improvement, it might also signify that Onondaga could more aggressively pursue this funding. See the screenshot below:"
                           , br()
                           , img( src = "https://github.com/DataCapstone/Data-Capstone/raw/master/Images/UC_datatable_airpot.JPG"
                                    , height = 200, width = 700
                                  ) # end of first screenshot
-               ) # end of long paragraph
+               ) 
                , h4(em("Education Programs"))
                , shiny::p("When looking at the grants provided by the Department of Education to Orange County, Ms Garcia finds that there has been a significant amount of funding provided to a specific School District in the county. However, she quickly realizes that this funding is tied to tax exempt land in the county and isn’t an opportunity for Onondaga to compete for funds. See screenshot below:"
                           , br()
