@@ -1,4 +1,7 @@
-#this is a function that will create the Census comparator graph in the County comparator tab.
+
+# this is a function that will create the Census comparator graph in the County comparator tab.
+
+#this function needs to be fed a dataframe with counties and their Pop, Median Home Income, pov.rate.
 
 krzycensuz <- function (x)
 {

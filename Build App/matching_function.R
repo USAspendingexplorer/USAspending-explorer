@@ -3,6 +3,7 @@
 #this function is using an R package called Match It, developed by Gary King at the Harvard Kennedy School
 #For more information look at: https://gking.harvard.edu/matchit
 
+#this function needs to be fed a dataframe with counties and their Pop, Median Home Income, pov.rate.
 
 krzymatch <- function(x, county= "Albany", comparators= 2) 
 {
