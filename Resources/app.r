@@ -60,7 +60,7 @@ source_github( census_url )
 NYcen_norm <- readRDS( gzcon(url("https://github.com/DataCapstone/Data-Capstone/blob/master/Raw-Data/NYcen_norm.RDS?raw=true")))
 
 # import small multiples aggregated data
-agg_url <- "https://raw.githubusercontent.com/DataCapstone/Data-Capstone/master/Linnea/small%20multiples%20aggregated%20data.R"
+agg_url <- "https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Build%20App/small_multiples_aggregated_data.R"
 source_github(agg_url)
 
 ############ Building the Dashboard##################
