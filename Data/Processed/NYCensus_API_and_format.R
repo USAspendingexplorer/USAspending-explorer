@@ -24,7 +24,7 @@ dem$his.rate <- dem$Hispanic/dem$Pop
 
 #Now we need to add a county.name variable. to do this we use the following object that had the county code and names equivalencies
 #getting a DF with the names of the counties and codes.
-cou <- read.csv("https://raw.githubusercontent.com/DataCapstone/Data-Capstone/master/Raw-Data/countycodesNY.csv", stringsAsFactors = F)
+cou <- read.csv("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Data/Raw/countycodesNY.csv", stringsAsFactors = F)
 dem$county.name <- as.factor(dem$county)
 levels(dem$county.name) <- as.character(cou$Name)
 #I used levels to standardize the names, but another way to do this could be using the match function:
