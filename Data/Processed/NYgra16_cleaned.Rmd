@@ -13,18 +13,33 @@ library(dplyr)
 
 ```
 
+## Add county names to raw NY FY16 Grants data
 ```{r}
-# Download the data, clean
-gra16.named <- readRDS(gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYgra16_counties_named.rds?raw=true")))
+# federal funding data
+gra16 <- readRDS(gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Raw/NYgra16.rds?raw=true")))
 
-#exclude money going to state government and choose only project grants
+# file with fips code and county names
+codes <- read.csv("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Data/Raw/countycodesNY.csv")
+
+# merge to add standardized county name to gra16 data and drop any rows with a county code that does not correspond to NY
+gra16.named <- merge(gra16 , codes, by.x = "recipient_county_code", by.y = "Fips")
+
+```
+
+## Exlude money going to the State government, clean names in data
+
+```{r}
+
+#exclude money going to state government
 gra16.without.state <- dplyr::filter( gra16.named , recipient_type != "00: State government" )
 
+#make county name a character
 gra16.2 <- mutate(gra16.without.state, county = as.character(Name))
 
-#note, changed from agency_name with 72 options to maj_agency_cat with 26!, also dropped columns I didn't need
+#choose columns
 gra16.3 <- gra16.2[ c("recip_cat_type", "county" , "fed_funding_amount" ,  "maj_agency_cat", "assistance_type" , "recipient_name", "cfda_program_title") ]
 
+#Combine values inside recip_cat_type
 x <- gra16.3$recip_cat_type == "i: Private agencies"
 gra16.3$recip_cat_type[x] <- "f: Private agencies"
 
@@ -34,6 +49,7 @@ gra16.3$recip_cat_type[y] <- "h: Private agencies"
 #making recip_cat_type into a factor and changing the levels into more friendly ones
 gra16.3$recip_cat_type <- factor(x= gra16.3$recip_cat_type)
 
+#Rename values inside recip_cat_type
 levels(gra16.3$recip_cat_type) <- c("Private Firm",
                                     "Government",
                                     "Higher Ed",
