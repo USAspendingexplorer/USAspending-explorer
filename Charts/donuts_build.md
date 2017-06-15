@@ -1,8 +1,6 @@
 donuts yummy
 ================
 
-nEED TO: \* collapse recip\_cat\_types? \* processed source DFs
-
 USING PIE FUNCTION and exploring both total and no state grants for NY
 ======================================================================
 
@@ -14,6 +12,7 @@ Main Federal Funding Agencies in NY
 #unique(gra16$maj_agency_cat) #27 levels
 #unique(gra16$agency_name) #72 levels
 #unique(gra16$agency_code) #95 levels
+
 
 #grouping by Agencies (maj_agency_cat)
 age <- group_by(gra16, maj_agency_cat)
@@ -31,7 +30,7 @@ dat <- ageT
 barplot(dat$Fed/1000000, names.arg = dat$maj_agency_cat, las = 2, cex.names = .7, cex.axis = .7 , ylab = "in USD 1MLL", cex.lab = .8, col="#4979FF", main = "Including State government")
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 ``` r
 #####pie charts!########
@@ -58,7 +57,7 @@ plot.new()
 par(mfrow = c(1,2), mar=c(1,1,1,1))
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-1-2.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 ``` r
 pie <- pie
@@ -68,7 +67,7 @@ pie<- pieT
 pie(as.numeric(pie$Fed), labels = paste0(pie$maj_agency_cat, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Including State Government", cex= .7, col=col)
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-1-3.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-1-3.png)
 
 Federal Funding by Recipient Types (recip\_cat\_type)
 -----------------------------------------------------
@@ -94,7 +93,7 @@ barplot(rec$Fed/1000000, names.arg = rec$recip_cat_type, las = 2, cex.names = .7
 barplot(recT$Fed/1000000, names.arg = recT$recip_cat_type, las = 2, cex.names = .7, cex.axis = .7 , ylab = "in USD 1MLL", cex.lab = .8, col="#4979FF", main = "Including State government")
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 ``` r
 #pie chart!
@@ -104,7 +103,7 @@ plot.new()
 par(mfrow = c(1,2), mar=c(1,1,1,1))
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-2-2.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-2-2.png)
 
 ``` r
 pie <- rec
@@ -114,7 +113,7 @@ pie<- recT
 pie(as.numeric(pie$Fed), labels = paste0(pie$recipient_name, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Including State Government", cex= .7, col=col)
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-2-3.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-2-3.png)
 
 USING DONUTZZ FUNCTION: Major Agencies in NY State
 ==================================================
@@ -133,8 +132,8 @@ source_github <- function( url ) {
 } 
 
 #load the donutzz function using the RAW link
-source_github("https://raw.githubusercontent.com/icps86/Functions/master/krzydonutzz")
-source_github("https://raw.githubusercontent.com/icps86/Functions/master/donutzz.R")
+source_github("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Charts/donut.R")
+source_github("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Charts/donut_multi.R")
 ```
 
 Now we need a data frame.
@@ -143,9 +142,6 @@ Now we need a data frame.
 #We first need to make a DF
 dat <- group_by(gra16, maj_agency_cat)
 dat <- arrange(as.data.frame(summarize(dat, Fed = sum(fed_funding_amount))), desc(Fed))
-
-#Removing code
-dat$maj_agency_cat <- substr(dat$maj_agency_cat, 7,nchar(dat$maj_agency_cat))
 
 #making an others category
 dat[6,] <- c("Others", sum(dat$Fed[6:length(dat$Fed)])) 
@@ -157,9 +153,9 @@ dat <- arrange(dat, desc(Fed))
 dat %>% pander
 ```
 
-<table style="width:57%;">
+<table style="width:56%;">
 <colgroup>
-<col width="43%" />
+<col width="41%" />
 <col width="13%" />
 </colgroup>
 <thead>
@@ -170,7 +166,7 @@ dat %>% pander
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">Department of Health and Human Services</td>
+<td align="center">Health And Human Services</td>
 <td align="center">4613172994</td>
 </tr>
 <tr class="even">
@@ -178,11 +174,11 @@ dat %>% pander
 <td align="center">1533693043</td>
 </tr>
 <tr class="odd">
-<td align="center">Department of Transportation</td>
+<td align="center">Transportation</td>
 <td align="center">1277061100</td>
 </tr>
 <tr class="even">
-<td align="center">Department of Housing and Urban Development</td>
+<td align="center">Housing And Urban Development</td>
 <td align="center">902251658</td>
 </tr>
 <tr class="odd">
@@ -190,7 +186,7 @@ dat %>% pander
 <td align="center">480960107</td>
 </tr>
 <tr class="even">
-<td align="center">Department of Homeland Security</td>
+<td align="center">Homeland Security</td>
 <td align="center">377451815</td>
 </tr>
 </tbody>
@@ -199,10 +195,10 @@ dat %>% pander
 Now we can use the function to call the donut
 
 ``` r
-donutzz(x=dat$Fed, lev=dat$maj_agency_cat, main="Main Funding Agencies in NY State")
+donutz(x=dat$Fed, lev=dat$maj_agency_cat, main="Main Funding Agencies in NY State")
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 KRZYDONUTZZ FUNCTION: Recipient types in 4 NY Counties
 ======================================================
@@ -212,14 +208,14 @@ Making mutiple donuts with facet wrap function
 ``` r
 #making dataset 
 dat <- gra16
-dat <- group_by(dat, Name, recip_cat_type)
-dat <- arrange(as.data.frame(summarize(dat, Fed = sum(fed_funding_amount))), Name)
+dat <- group_by(dat, county, recip_cat_type)
+dat <- arrange(as.data.frame(summarize(dat, Fed = sum(fed_funding_amount))), county)
 table(dat$Fed < 0) #has negative numbers
 ```
 
     ## 
     ## FALSE  TRUE 
-    ##   329     9
+    ##   276     4
 
 ``` r
 dat$Fed[0 >= dat$Fed] <- 0
@@ -228,14 +224,14 @@ table(is.na(dat$Fed)) #no NAs
 
     ## 
     ## FALSE 
-    ##   338
+    ##   280
 
 ``` r
-x <- dat$Name%in% c("Albany", "Onondaga", "Wyoming", "Queens")
+x <- dat$county %in% c("Albany", "Onondaga", "Wyoming", "Queens")
 dat <- dat[x,]
 
 #trying the function
-krzydonutzz(x= dat, values = "Fed", labels = "recip_cat_type", multiple = "Name", main = "Federal Funding by Recipient type in NY Counties", percent.cex = 3, columns = 2, sbgfill = "grey95", sbgcol = "grey60")
+krzydonutz(x= dat, values = "Fed", labels = "recip_cat_type", multiple = "county", main = "Federal Funding by Recipient type in NY Counties", percent.cex = 3, columns = 2, sbgfill = "grey95", sbgcol = "grey60")
 ```
 
-![](donuts_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-6-1.png)
