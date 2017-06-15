@@ -44,8 +44,8 @@ source_github( leaflet_url )
 fancy_table_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Build%20App/fancy_table.r"
 source_github( fancy_table_url )
 
-# import county overview 
-co_url <- "https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Build%20App/aggregation_sanky_gra163.R"
+# import county overview SANKY
+co_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Build%20App/aggregation_sanky_gra163.R"
 source_github(co_url)
 
 # load the census function using the RAW link
@@ -53,7 +53,7 @@ census_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending
 source_github( census_url )
 
 # import small multiples aggregated data
-agg_url <- "https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Build%20App/small_multiples_aggregated_data.R"
+agg_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Build%20App/small_multiples_aggregated_data.R"
 source_github(agg_url)
 
 ############ Building the Dashboard##################
@@ -73,7 +73,7 @@ header <- dashboardHeader(title = "USAspending Explorer"
                                         , style = "padding-top:10px; padding-bottom:10px;")
                                      , class = "dropdown"
                           ) # end of Maxwell Logo
-                          , tags$li(a(href = "https://github.com/DataCapstone/Data-Capstone"
+                          , tags$li(a(href = "https://github.com/USAspendingexplorer/USAspending-explorer"
                                       , img( src = "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Images/GitHub_Logo.png"
                                              , title = "Fork Me on GitHub", height = "30px")
                                       , style = "padding-top:10px; padding-bottom:10px;")
@@ -104,7 +104,7 @@ body <- dashboardBody(
             # , shiny::p("USAspending Explorer is an open source tool designed to assist in the navigation of federal data made publicly available through usaspending.gov. Through dynamic visualizations and search filters, the Explorer can answer the who, what, where, why and how of the complex federal government spending landscape.")
             , shiny::p("USAspending Explorer is an open source tool designed to assist in the navigation of federal data made publicly available through ", span( a("usaspending.gov", href = "https://www.usaspending.gov/DownloadCenter/Pages/DataDownload.aspx", target = "_blank")), ". Through dynamic visualizations and search filters, the Explorer can answer the who, what, where, why and how of the complex federal government spending landscape.")
             , shiny::p("This explorer serves as a tool to understand federal funding at the county level. It focuses on federal assistance in the form of grants and excludes grants that go directly to the state government because of the complexity of determining the final recipient of those funds.") 
-            , shiny::p("With USAspending Explorer, You can understand how tax dollars are spent, explore who receives federal grants in your area, and see what that funding is directed towards. This tool shows total funding going to each county, and how funds are distributed geographically within the state adjusted by population. It also offers flexible comparisons between counties and the state average, displays county demographic information to inform county comparisons, and breaks down county funding by the funding agency, recipient, and program to better understand what is driving variations across counties.")
+            , shiny::p("With USAspending Explorer, you can understand how tax dollars are spent, explore who receives federal grants in your area, and see what that funding is directed towards. This tool shows total funding going to each county, and how funds are distributed geographically within the state adjusted by population. It also offers flexible comparisons between counties and the state average, displays county demographic information to inform county comparisons, and breaks down county funding by the funding agency, recipient, and program to better understand what is driving variations across counties.")
             , h3("All Federal Grant Funding Received by County, FY 2016")
             , fluidRow(
               column(width = 4
