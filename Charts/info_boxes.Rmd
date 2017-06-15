@@ -1,0 +1,132 @@
+---
+title: "value boxes"
+runtime: shiny
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(shiny)
+library(shinydashboard)
+options(scipen=999)
+
+```
+
+## Load in Data
+
+```{r}
+
+# Download the data, clean
+gra16.3 <- readRDS(gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYgra16_cleaned.rds?raw=true")))
+
+```
+
+
+```{r}
+
+top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
+
+top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
+
+```
+
+```{r}
+
+ui <- fluidPage(
+  
+  selectInput( inputId='county', 
+               label = "Pick a county",
+               choices= c("NY State", sort(unique(gra16.3$county))),
+               selected=c("NY State")
+  ),
+  
+  fluidRow(
+  infoBoxOutput( "top" ), 
+  
+  infoBoxOutput("top.dollars"),
+  
+  infoBoxOutput("top.num")
+  )
+)
+
+server <- function(input, output) {
+  
+  output$top <- renderInfoBox({
+    
+    top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
+    
+    if (input$county == "NY State") {
+      
+      top.rec.2 <- top.rec
+      top.rec.3 <- arrange(top.rec.2 , desc(x))
+      top <- top.rec.3[1,]$Group.1
+      
+    } else {
+      
+      top.rec.2 <- filter(top.rec , Group.2 == input$county)
+      top.rec.3 <- arrange(top.rec.2 , desc(x))
+      top <- top.rec.3[1,]$Group.1
+      
+    }
+    
+    infoBox(
+      "Top Recipient", paste0(top), icon = icon("users"),
+      color = "aqua"
+    )
+  })
+  
+  output$top.dollars <- renderInfoBox({
+    
+    top.rec <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = sum)
+    
+    if (input$county == "NY State") {
+      
+      top.rec.2 <- top.rec
+      top.rec.3 <- arrange(top.rec.2 , desc(x))
+      top.dollars <- top.rec.3[1,]$x
+      
+    } else {
+      
+      top.rec.2 <- filter(top.rec , Group.2 == input$county)
+      top.rec.3 <- arrange(top.rec.2 , desc(x))
+      top.dollars <- top.rec.3[1,]$x
+      
+    }
+    
+    infoBox(
+      "Top Recipient Funding", paste0("$", prettyNum(top.dollars, big.mark = ",")), icon = icon("credit-card"),
+      color = "purple"
+    )
+  })
+  
+  output$top.num <- renderInfoBox({
+    
+    top.rec.num <- aggregate(gra16.3$fed_funding_amount, by= list(gra16.3$recipient_name, gra16.3$county), FUN = length )
+    
+    if (input$county == "NY State") {
+      
+      top.rec.num.2 <- top.rec.num
+      top.rec.num.3 <- arrange(top.rec.num.2 , desc(x))
+      top.num <- top.rec.num.3[1,]$x  
+      
+    } else {
+      
+      top.rec.num.2 <- filter(top.rec.num , Group.2 == input$county)
+      top.rec.num.3 <- arrange(top.rec.num.2 , desc(x))
+      top.num <- top.rec.num.3[1,]$x
+      
+    }
+    
+    infoBox(
+      "Top Recipient Number of Transactions", paste0(top.num), icon = icon("list"),
+      color = "green"
+    )
+  })
+}
+
+shinyApp(ui=ui, server=server)
+
+
+```
