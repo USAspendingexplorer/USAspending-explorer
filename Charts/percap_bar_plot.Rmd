@@ -1,0 +1,160 @@
+---
+title: "shiny adapted"
+runtime: shiny
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(pander)
+library(shiny)
+library(censusapi)
+library(plotly)
+
+```
+
+## Load in Data
+
+```{r}
+
+#Load cleaned NYFY16 data
+gra16.3 <- readRDS(gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYgra16_cleaned.rds?raw=true")))
+
+#Load the population data
+population <- readRDS(gzcon(url("https://github.com/DataCapstone/Data-Capstone/blob/master/Raw-Data/NYcensus.rds?raw=true"))) 
+
+```
+
+## Load in functions
+
+```{r}
+
+# Aggregation function
+agg.county <- function(df , var){
+  
+ag <- aggregate(df$fed_funding_amount, by= list( df$county, var), FUN = sum  )
+
+colnames(ag) <- c("county", "var", "fund")
+
+  return(ag)
+}
+
+
+
+
+# Per capita aggregation function
+agg.county.percap <- function(df, df.p , var){
+  
+ag <- aggregate(df$fed_funding_amount, by= list( df$county, var), FUN = sum  )
+
+colnames(ag) <- c("county", "var", "fund")
+
+ag.pop <- merge(ag , df.p, by.x = "county", by.y = "county.name")
+
+ag.pop.2 <- mutate(ag.pop , percap =  fund / Pop )
+
+ag.pop.3 <- ag.pop.2[c("var", "fund", "percap", "county")]
+
+  return(ag.pop.3)
+}
+
+
+
+
+# Per capita aggregation function, statewide
+agg.percap <- function(df, df.p, var){
+  
+ag <- aggregate(df$fed_funding_amount, by= list( var), FUN = sum  )
+
+colnames(ag) <- c("var", "fund")
+
+ag.2 <- mutate(ag , county = "NY Average")
+
+ag.per <- mutate(ag.2 , percap = fund / (sum(df.p$Pop)))
+
+  return(ag.per)
+}
+
+
+```
+
+## Create a data frame with per capita aggregation for NY State as a whole
+
+```{r}
+
+# National Aggregation
+
+ny.grp <- mutate(gra16.3 , assistance_type.2 = ifelse( assistance_type == "04: Project grant", "Project Grants" , "Other Grants" ) )
+
+ny.per <- agg.percap(ny.grp , population , ny.grp$assistance_type.2) #Function
+
+colnames(ny.per)[1] <- "assistance_type.2"
+
+ny.per.2 <- ny.per[c("assistance_type.2", "fund", "percap", "county")]
+
+```
+
+## Shiny per capita bar plot with NY average
+
+```{r}
+
+ui <- fluidPage(
+      selectizeInput(
+        inputId='your_county', 
+            label='Select up to 4 counties to compare:', 
+            choices= sort(unique(gra16.3$county)),
+            selected=c("Onondaga"), 
+            multiple = TRUE, 
+            options = list(maxItems = 4)
+        ),
+  
+  plotOutput("percapPlot")
+  
+  ) 
+
+
+server <- function(input, output) {
+  
+
+#Percapita bar plot  
+output$percapPlot <- renderPlot({
+    
+gra16.4 <- filter(gra16.3 , county %in% input$your_county )
+    
+    pop.filtered <- filter(population , county.name %in% input$your_county )
+    
+    gra16.4.2 <- mutate(gra16.4 , assistance_type.2 = ifelse( assistance_type == "04: Project grant", "Project Grants" , "Other Grants" ) )
+    
+    gra16.agg <- agg.county.percap(gra16.4.2 , pop.filtered, gra16.4.2$assistance_type.2) #Function
+    
+    colnames(gra16.agg)[1] <- "assistance_type.2"
+    
+    gra16.agg.2 <- gra16.agg[c("assistance_type.2", "fund", "percap", "county")]
+    
+    gra16.agg.3 <- rbind(gra16.agg.2 , ny.per.2)
+    
+    cols <- c("#EBEBEB", "#649EFC")
+    
+    ggplot(gra16.agg.3, aes(x = county, y = percap, fill = assistance_type.2)) + 
+      geom_bar(stat = "identity") + 
+      labs(x="County", y="Per Capita Funding") +
+      # ggtitle("Per Capita Federal Funding by County") +
+      scale_y_continuous(labels = scales::dollar_format(prefix="$", big.mark = ",")) + 
+      scale_fill_manual(values = cols) +   
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background = element_blank(), axis.line = element_blank() , legend.title = element_blank())
+ 
+
+  })
+
+ 
+} 
+
+shinyApp(ui= ui , server = server)
+
+```
+
+
+
