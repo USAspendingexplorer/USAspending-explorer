@@ -19,7 +19,7 @@ codes <- read.csv("https://raw.githubusercontent.com/USAspendingexplorer/USAspen
 # merge to add standardized county name to gra16 data and drop any rows with a county code that does not correspond to NY
 gra16.named <- merge(gra16 , codes, by.x = "recipient_county_code", by.y = "Fips")
 
-#saveRDS(gra16.named, "NYgra16_counties_named.rds")
+saveRDS(gra16.named, "NYgra16_counties_named.rds")
 
 ```
 
