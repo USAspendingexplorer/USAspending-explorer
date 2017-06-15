@@ -1,0 +1,278 @@
+---
+title: "donuts yummy"
+output: github_document
+html_document:
+  df_print: paged
+  keep_md: true
+  code_fold: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set( echo = T, message=F, warning=F, fig.width = 10, fig.height = 10 )
+library(dplyr)
+library(pander)
+library(ggplot2)
+
+########################
+#grants DF
+
+gra16 <- readRDS( gzcon(url("https://github.com/DataCapstone/Data-Capstone/blob/master/Raw-Data/NYgra16_counties_named.rds?raw=true")))
+
+graTOTAL <- gra16
+
+#processing the DF
+
+#Removing state grants
+x <- gra16$recipient_type == "00: State government"
+#table(x)
+#FALSE  TRUE 
+#18695 11801
+gra16 <- gra16[!x,]
+
+options(scipen = 999)
+```
+
+
+#USING PIE FUNCTION and exploring both total and no state grants for NY
+
+##Main Federal Funding Agencies in NY
+
+```{r}
+#Possible variables:
+#unique(gra16$maj_agency_cat) #27 levels
+#unique(gra16$agency_name) #72 levels
+#unique(gra16$agency_code) #95 levels
+
+#grouping by Agencies (maj_agency_cat)
+age <- group_by(gra16, maj_agency_cat)
+age <- arrange(as.data.frame(summarize(age, Fed = sum(fed_funding_amount), Freq = n())), desc(Fed))
+
+#grouping by Age TOTAL
+ageT <- group_by(graTOTAL, maj_agency_cat)
+ageT <- arrange(as.data.frame(summarize(ageT, Fed = sum(fed_funding_amount), Freq = n())), desc(Fed))
+
+#barplot
+par(mar = c(10,6,3,3), mfrow=c(1,2))
+dat <- age
+barplot(dat$Fed/1000000, names.arg = dat$maj_agency_cat, las = 2, cex.names = .7, cex.axis = .7 , ylab = "in USD 1MLL", cex.lab = .8, col="#4979FF", main= "Main Federal Funding Agencies in NY")
+dat <- ageT
+barplot(dat$Fed/1000000, names.arg = dat$maj_agency_cat, las = 2, cex.names = .7, cex.axis = .7 , ylab = "in USD 1MLL", cex.lab = .8, col="#4979FF", main = "Including State government")
+
+#####pie charts!########
+
+#making an others category
+dat <- age
+pie <- dat[1:5,]
+pie[6,] <- c("OTHERS", sum(dat$Fed[6:length(dat$Fed)]), sum(dat$Freq[6:length(dat$Fed)])) 
+pie$Fed <- as.numeric(pie$Fed)
+pie <- arrange(pie, desc(Fed))
+
+#making an others category TOTAL
+dat <- ageT
+pieT <- dat[1:5,]
+pieT[6,] <- c("OTHERS", sum(dat$Fed[6:length(dat$Fed)]), sum(dat$Freq[6:length(dat$Fed)])) 
+pieT$Fed <- as.numeric(pieT$Fed)
+pieT <- arrange(pieT, desc(Fed))
+
+#colors
+col <- c("#4979FF", "#FF9858",  "#8DFFFF", "#FF84FF", "#55D473", "#FFFF78", "grey80")
+
+#plotting pies
+plot.new()
+par(mfrow = c(1,2), mar=c(1,1,1,1))
+pie <- pie
+pie(as.numeric(pie$Fed), labels = paste0(pie$maj_agency_cat, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Main Federal Funding Agencies in NY", cex= .7, col=col)
+
+pie<- pieT
+pie(as.numeric(pie$Fed), labels = paste0(pie$maj_agency_cat, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Including State Government", cex= .7, col=col)
+
+```
+
+
+##Federal Funding by Recipient Types (recip_cat_type)
+
+```{r}
+
+#possible variables:
+#unique(gra16$recip_cat_type) #12 levels
+#unique(gra16$recipient_type) #7 levels
+
+#grouping by recipients 
+rec <- group_by(gra16, recip_cat_type)
+rec <- arrange(as.data.frame(summarize(rec, Fed = sum(fed_funding_amount), Freq = n())), desc(Fed))
+
+#grouping by recipients TOTAL
+recT <- group_by(graTOTAL, recip_cat_type)
+recT <- arrange(as.data.frame(summarize(recT, Fed = sum(fed_funding_amount), Freq = n())), desc(Fed))
+
+#barplot
+par(mar = c(7,6,3,3), mfrow=c(1,2))
+
+barplot(rec$Fed/1000000, names.arg = rec$recip_cat_type, las = 2, cex.names = .7, cex.axis = .7 , ylab = "in USD 1MLL", cex.lab = .8, col="#4979FF", main= "Federal Funding by Recipient Types")
+
+barplot(recT$Fed/1000000, names.arg = recT$recip_cat_type, las = 2, cex.names = .7, cex.axis = .7 , ylab = "in USD 1MLL", cex.lab = .8, col="#4979FF", main = "Including State government")
+
+
+#pie chart!
+col <- c("#4979FF", "#FF9858",  "#8DFFFF", "#FF84FF", "#55D473", "#FFFF78", "grey80")
+
+plot.new()
+par(mfrow = c(1,2), mar=c(1,1,1,1))
+pie <- rec
+pie(as.numeric(pie$Fed), labels = paste0(pie$recip_cat_type, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Federal Funding by Recipient Types", cex= .7, col=col)
+
+pie<- recT
+pie(as.numeric(pie$Fed), labels = paste0(pie$recipient_name, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Including State Government", cex= .7, col=col)
+
+```
+
+#USING DONUTZZ FUNCTION: Major Agencies in NY State
+
+First we need to create a function to read functions from github into Rstudio:
+```{r}
+
+#calling the function from git
+source_github <- function( url ) {
+  # load package
+  require(RCurl)
+  
+  # read script lines from website and evaluate
+  script <- getURL(url, ssl.verifypeer = FALSE)
+  eval(parse(text = script), envir=.GlobalEnv)
+} 
+
+#load the donutzz function using the RAW link
+source_github("https://raw.githubusercontent.com/icps86/Functions/master/krzydonutzz")
+source_github("https://raw.githubusercontent.com/icps86/Functions/master/donutzz.R")
+```
+
+Now we need a data frame. 
+```{r}
+#We first need to make a DF
+dat <- group_by(gra16, maj_agency_cat)
+dat <- arrange(as.data.frame(summarize(dat, Fed = sum(fed_funding_amount))), desc(Fed))
+
+#Removing code
+dat$maj_agency_cat <- substr(dat$maj_agency_cat, 7,nchar(dat$maj_agency_cat))
+
+#making an others category
+dat[6,] <- c("Others", sum(dat$Fed[6:length(dat$Fed)])) 
+dat <- dat[c(1:6),]
+dat$Fed <- as.numeric(dat$Fed)
+dat <- arrange(dat, desc(Fed))
+
+#this is the dataframe we use
+dat %>% pander
+
+```
+
+Now we can use the function to call the donut
+
+```{r}
+donutzz(x=dat$Fed, lev=dat$maj_agency_cat, main="Main Funding Agencies in NY State")
+```
+
+#KRZYDONUTZZ FUNCTION: Recipient types in 4 NY Counties
+
+Making mutiple donuts with facet wrap function 
+
+```{r}
+#making dataset 
+dat <- gra16
+dat <- group_by(dat, Name, recip_cat_type)
+dat <- arrange(as.data.frame(summarize(dat, Fed = sum(fed_funding_amount))), Name)
+table(dat$Fed < 0) #has negative numbers
+dat$Fed[0 >= dat$Fed] <- 0
+table(is.na(dat$Fed)) #no NAs
+
+x <- dat$Name%in% c("Albany", "Onondaga", "Wyoming", "Queens")
+dat <- dat[x,]
+
+#trying the function
+krzydonutzz(x= dat, values = "Fed", labels = "recip_cat_type", multiple = "Name", main = "Federal Funding by Recipient type in NY Counties", percent.cex = 3, columns = 2, sbgfill = "grey95", sbgcol = "grey60")
+
+```
+
+#twiking the function
+```{r}
+
+x <- dat
+
+krzydonutzz <- function (x, values, labels, multiple = NULL, width.max=3, width.min=2, border.col="white", border.cex =1.5,
+                         main = "", mar = 1, percent.cex = 4, columns = 2, sbgfill = "grey95", sbgcol = "grey60")
+{
+  # Load Required Packages
+  require(ggplot2)
+  require(dplyr)
+  
+  #renaming the columns of the DF to work with them
+  colnames(x)[colnames(x) == multiple] <- "multiple"
+  colnames(x)[colnames(x) == labels] <- "labels"
+  colnames(x)[colnames(x) == values] <- "values"
+  
+  #Warnings
+  if (!is.numeric(x$values) || any(is.na(x$values) | x$values < 0))
+    stop("'Values' variable cannot handle NA's and must be a numeric vector with only positive numbers.")
+  
+  if (length(unique(x$multiple)) > 8)
+    stop("You are trying to plot too many donutzz! (8 max)")
+
+  #making factors for labels
+  x$labels <- factor(x=as.character(x$labels), ordered = F)
+
+  #loop to format the dataframe and making the variables needed
+  i <- 1
+  df <- data.frame()
+  x2 <- NULL
+  
+  while (i  <= length(unique(x$multiple))) 
+  {
+    x2 <- x$multiple == sort(unique(x$multiple))[i]
+    x2 <- x[x2,]
+    x2 <- x2[order(-x2$values),] 
+    x2$fraction <- x2$values/sum(x2$values)
+    x2$ymax <- cumsum(x2$fraction)
+    x2$ymin <- c(0, x2$ymax[1:length(x2$ymax)-1])
+    x2$mid <- (x2$ymin + x2$ymax)/2
+    df <- rbind(df, x2)
+    i = i + 1
+  }
+  
+  x <- df
+  
+  pie <- ggplot(data=x,
+                aes(fill=labels,
+                    xmax=width.max, xmin=width.min,
+                    ymax=ymax, ymin=ymin)) +
+    xlim(c(0, width.max + mar)) +
+    geom_rect(colour=border.col,
+              size = border.cex) +
+    coord_polar(theta="y") +
+    geom_text(aes(x= width.max+.5, y = x$mid, label = paste0(round(x$fraction*100, digits = 1),"%")),
+              size= percent.cex,
+              #fontface = "bold",
+              hjust = .5,
+              vjust = .5,
+              colour = "grey50") +
+    ggtitle(label=main) +
+    theme_bw() +
+    theme(panel.grid=element_blank(),
+          axis.text=element_blank(), 
+          axis.ticks=element_blank(),
+          axis.title = element_blank(),
+          panel.border = element_blank(),
+          strip.background = element_rect(fill= sbgfill, color = sbgcol), 
+          plot.margin = margin(0,0,0,0, "cm"),
+          legend.margin = margin(0,0,0,0, "cm"),
+          legend.title = element_blank(),
+          legend.position = "right",
+          legend.text = element_text(colour = "grey40", size = 9)) +
+    facet_wrap(~multiple, ncol = columns)
+  return(pie)
+}
+
+krzydonutzz(x= dat, values = "Fed", labels = "recip_cat_type", multiple = "Name", main = "", percent.cex = 3, columns = 2, sbgfill = "grey95", sbgcol = "grey60")
+
+
+```
+

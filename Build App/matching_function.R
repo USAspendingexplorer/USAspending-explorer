@@ -1,3 +1,8 @@
+#this is a matching function that provides similar counties for the comparator. 
+
+#this function is using an R package called Match It, developed by Gary King at the Harvard Kennedy School
+#For more information look at: https://gking.harvard.edu/matchit
+
 
 krzymatch <- function(x, county= "Albany", comparators= 2) 
 {

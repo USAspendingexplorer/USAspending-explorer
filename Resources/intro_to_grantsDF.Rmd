@@ -1,0 +1,215 @@
+---
+title: "Grants data frame"
+output: github_document
+html_document:
+  df_print: paged
+  keep_md: true
+  code_fold: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set( message=F, warning=F, fig.width = 10, fig.height = 10 )
+library(dplyr)
+library(pander)
+setwd("C:/Users/icps/Dropbox/3. Maxwell/4. Capston/Data-Capstone/ignacio")
+gra16 <- readRDS( gzcon(url("https://github.com/DataCapstone/Data-Capstone/blob/master/Raw-Data/NYgra16.rds?raw=true")))
+
+
+```
+
+
+```{r, eval=FALSE}
+#generating a csv with the variables
+x <- gra16[1,]
+x <- as.data.frame(lapply(x, class))
+x <- as.data.frame(t(x))
+x <- data.frame(var = row.names(x), class = as.character(x$V1), stringsAsFactors = F)
+grav <- x
+write.csv(grav, "gra.variables.csv", row.names = F)
+
+```
+
+```{r, eval= FALSE}
+#exploring some variables
+
+#types of assistance
+#what type of assistances are they getting?
+unique(gra16$asst_cat_type)
+unique(gra16$assistance_type)
+
+#cfda_program_title
+head(gra16$cfda_program_title)
+head(gra16$cfda_program_num)
+(table(gra16$cfda_program_title == "")) #has 110 blank ones.
+table(is.na(gra16$cfda_program_title)) #no NAs here!
+class(gra16$cfda_program_title)
+
+#fda_program_num
+table(is.na(gra16$cfda_program_num)) #no NAs here!
+table(gra16$cfda_program_num == "") #no blanks!
+class(gra16$cfda_program_num)
+
+#project_description
+unique(gra16$project_description)
+
+######PRINCIPAL PLACE###############
+#location: wanna focus on 4 cities, no idea if they are comparable.
+sort(unique(gra16$principal_place_cc))
+# "Syracuse" | "SYRACUSE"   
+# "Rochester" | "ROCHESTER"
+# "Albany" | "ALBANY"
+#  "Ithaca" | "ITHACA" 
+
+sort(unique(gra16$principal_place_state)) 
+#Output is  "Illinois" "Massachusetts" "New York" "NEW YORK"
+#this means that the filter in the manual download is not for this variable. 
+
+######RECIPIENTS###############
+sort(unique(gra16$recipient_state_code)) 
+#output is only NY, so the filter is by recipients place, which makes sense because if we are an IDA we should care about the recipient not the pop.
+
+head(sort(unique(gra16$recipient_city_name)))
+# "Syracuse" | "SYRACUSE"   
+# "Rochester" | "ROCHESTER"
+# "Albany" | "ALBANY"
+#  "Ithaca" | "ITHACA" 
+
+head(sort(unique(gra16$recipient_county_code)))
+head(sort(unique(gra16$recipient_county_name)))
+head(sort(unique(gra16$recipient_state_code)))
+
+```
+
+#Issue with consistency of the names
+```{r}
+#looking for consistency in the names of agencies / programs
+
+x <- gra16[, c("maj_agency_cat", "agency_name", "agency_code", "cfda_program_num", "cfda_program_title")]
+x$maj <- substr(x$maj_agency_cat, 1,2)
+x$cod <- substr(x$agency_code, 1,2)
+x$cfda <- substr(as.character(x$cfda_program_num), 1,2)
+
+#table(x$maj == x$cod) #only 4 inconsistencies between the first two numbers of agency maj and agency code.
+
+#table(x$maj == x$cfda) #only 43 times they are the same
+#and this is when:
+#x[x$maj == x$cfda,] #19 for department of state in both cfda codes and agency code
+
+length(unique(x$maj_agency_cat)) #24
+length(unique(x$maj)) #23
+length(unique(x$agency_code)) #83
+length(unique(x$cod)) #25
+
+length(unique(x$agency_name)) #67
+
+length(unique(x$cfda)) #24
+length(unique(x$cfda_program_num)) #782
+
+```
+
+
+#looking at action type
+
+```{r}
+#most common cfda
+
+head(arrange(as.data.frame(table(gra16$cfda_program_title)), desc(Freq)))
+
+x <- gra16$cfda_program_title == "Highway Planning and Construction"
+dat <- gra16[x,]
+
+#unique(gra16$action_type)
+#A: new assistance
+#B: continuation
+#C: Revision
+#D: Fnd adjustment
+
+dat$act_typ <- substr(dat$action_type, 1, 1) #making it only the first code letter
+head(arrange(as.data.frame(table(dat$act_typ)), desc(Freq)))
+
+```
+
+
+
+**ASSISSTANCE**
+
+* 1	unique_transaction_id	character
+* 16	federal_award_id	character
+
+* 18	fed_funding_amount	numeric
+* 19	non_fed_funding_amount	numeric
+* 20	total_funding_amount	numeric
+
+* 50	asst_cat_type	character
+* 24	assistance_type	character
+* 25	record_type	integer             :  Federal Assistance Awards Data System record type: 1 = county aggregate record, 2 = individual action record.
+* 47	fiscal_year	integer
+
+* 23	ending_date	character
+
+* 28	principal_place_code	character
+* 29	principal_place_state	character
+* 30	principal_place_cc	character
+* 32	principal_place_zip	character
+* 48	principal_place_state_code	character
+
+**AGENCY/PROGRAM**
+
+* 52	maj_agency_cat	character
+* 35	agency_name	character
+* 4	  cfda_program_num	numeric
+* 34	cfda_program_title	character
+* 15	agency_code	character
+
+**RECIPIENT**
+
+* 36	project_description	character
+* 7	recipient_name	character
+* 13	recipient_type	character
+* 49	recip_cat_type	character
+
+* 8	recipient_city_code	integer
+* 9	recipient_city_name	character
+* 10	recipient_county_code	integer
+* 11	recipient_county_name	character
+* 56	recipient_state_code	character
+* 12	recipient_zip	integer
+* 42	receip_addr1	character
+* 43	receip_addr2	character
+* 44	receip_addr3	character
+
+* 57	exec1_fullname	character
+* 58	exec1_amount	numeric
+
+
+#recip_cat_type and recipient_type equivalencies
+
+* g: Government -> 00: State government           
+* g: Government -> 02: City or township government
+* g: Government -> 01: County government
+* g: Government -> 04: Special district government
+* g: Government -> 05: Independent school district
+* h: Government -> 06: State controlled institution of higher education
+ 
+* n: Nonprofit agencies -> "12: Other nonprofit"                                 
+* n: Nonprofit agencies -> "11: Indian tribe"                                    
+
+* h: Private agencies -> 20: Private higher education
+* f: Private agencies -> 22: Profit organization
+* f: Private agencies -> 23: Small business
+* i: Private agencies -> 21: Individual
+* o: Private agencies -> 25: All other
+
+
+#Questions
+
+1. how to work with negatives?
+
+2. when looking at the action type 
+
+3. Continuation (funding in succeeding budget period which stemmed from prior agreement to fund amount of the current action)"  This means we are double counting money?
+
+ 
+                                
+
+

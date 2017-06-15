@@ -1,4 +1,51 @@
-#this is a function that will create the Census comparator graph in the County comparator tab.
+---
+title: "Census comp"
+output: github_document
+html_document:
+  df_print: paged
+  keep_md: true
+  code_fold: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set( message=F, warning=F, fig.width = 10, fig.height = 10 )
+library(dplyr)
+library(pander)
+library(ggplot2)
+
+```
+
+```{r}
+################## CALLING THE CENSUS DF #########################
+
+dem <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYcensus.rds?raw=true")))
+
+#only working with four comparatos and NY state
+#"Matches for Onondaga: 1.Broome, 2.St. Lawrence, 3.Orange, 4.Sullivan, 5.Monroe"
+
+dat <- dem
+x <- dat$county.name %in% c("Onondaga", "Broome", "St. Lawrence", "Sullivan")
+
+dat <- dat[x,]
+dat$county.name <- factor(dat$county.name, ordered= TRUE)
+rownames(dat) <- 1:nrow(dat)
+
+```
+
+#Building the function
+
+
+```{r}
+#################### MAKING THE function #######################
+
+#making a df of all the max y min values
+maxxes <- data.frame(val= c("Pop", "MHincome", "Pov.rate"), min = c(min(dem$Pop), min(dem$MHincome), min(dem$pov.rate)), max = c(max(dem$Pop), max(dem$MHincome), max(dem$pov.rate)))
+
+maxxes %>% pander
+
+#State Average 317309    55276     13.8
+
+x <- dat
 
 krzycensuz <- function (x)
 {
@@ -6,6 +53,9 @@ krzycensuz <- function (x)
   require(ggplot2)
   require(gridExtra)
   options(scipen = 999)
+  
+  #formating poverty rate as a percentage
+  x$pov.rate <- x$pov.rate*100
   
   #the function will make three plots, save them into objects and stack them together using gridExtra
   
@@ -88,3 +138,34 @@ krzycensuz <- function (x)
   
   return(bars)
 }
+
+krzycensuz(x)
+
+
+############################################
+
+```
+
+
+#An alternative that gor discarded: display using a table
+
+```{r}
+#################### MAKING THE table #######################
+#install.packages("formattable")
+library(formattable)
+
+x <- x[,c("county.name", "Pop", "MHincome", "pov.rate")]
+x$Pop <- accounting(x$Pop, digits = 0)
+x$MHincome <- accounting(x$MHincome, digits = 0)
+x$pov.rate <- percent(x$pov.rate/100, digits = 1)
+colnames(x)<- c("County", "Population", "Income", "Poverty Rate")
+
+formattable(x, 
+            list(County= formatter("span", style = x ~ ifelse(x == "State Average", style(font.weight = "bold"), style(color = "red"))),
+                 Population = color_tile("red", "white"),
+                 Income = color_bar("lightblue"),
+                 "Poverty Rate" = color_bar("lightblue")))
+
+
+```
+
