@@ -5,6 +5,9 @@ krzycensuz <- function (x)
   require(gridExtra)
   options(scipen = 999)
   
+  #formating poverty rate as a percentage
+  x$pov.rate <- x$pov.rate*100
+  
   #the function will make three plots, save them into objects and stack them together using gridExtra
   
   #making the first plot
