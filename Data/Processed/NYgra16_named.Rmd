@@ -1,0 +1,25 @@
+---
+title: "county names"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Add county names to raw NY FY16 Grants data
+```{r}
+# federal funding data
+gra16 <- readRDS(gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Raw/NYgra16.rds?raw=true")))
+
+# file with fips code and county names
+codes <- read.csv("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Data/Raw/countycodesNY.csv")
+
+# merge to add standardized county name to gra16 data and drop any rows with a county code that does not correspond to NY
+gra16.named <- merge(gra16 , codes, by.x = "recipient_county_code", by.y = "Fips")
+
+#saveRDS(gra16.named, "NYgra16_counties_named.rds")
+
+```
+
