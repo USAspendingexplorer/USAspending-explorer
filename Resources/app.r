@@ -68,13 +68,13 @@ source_github(agg_url)
 ## customize header ##
 header <- dashboardHeader(title = "USAspending Explorer"
                           , tags$li( a( href = "https://www.maxwell.syr.edu/deans/"
-                                        , img( src = "https://www.maxwell.syr.edu/uploadedimages/deans/branding/SUMaxSigWM.allW.png"
+                                        , img( src = "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Images/SUMaxell_Logo.png"
                                                , title = "Maxwell School Homepage", height = "30px")
                                         , style = "padding-top:10px; padding-bottom:10px;")
                                      , class = "dropdown"
                           ) # end of Maxwell Logo
                           , tags$li(a(href = "https://github.com/DataCapstone/Data-Capstone"
-                                      , img( src = "https://github.com/DataCapstone/Data-Capstone/raw/10b7bdc7876d446aba3ddf6dd8dc080744fd4309/Raw-Data/GitHub_Logo.png"
+                                      , img( src = "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Images/GitHub_Logo.png"
                                              , title = "Fork Me on GitHub", height = "30px")
                                       , style = "padding-top:10px; padding-bottom:10px;")
                                     , class = "dropdown"
@@ -226,22 +226,10 @@ body <- dashboardBody(
     , tabItem( tabName = "Use"
                , h1("Welcome to the Use Case")
                , h2("User:")
-               #, shiny::p("State-level official creating a report of federal funding received by county.")
                , shiny::p("Ms. Sherry Garcia. Public official at the Onondaga County’s Industrial Development Agency (OCIDA)")
                , h2("Interest:")
-               #, shiny::p("An employee in the New York state economic development office wants to generate a report of federal spending in New York state broken down by per capita spending in each county. Their goal is to better understand federal funding structure and come up with insights about why funding patterns vary across counties. Specifically, the user will focus on project grant activity within each county with the long term goal of helping counties compete more successfully for additional federal funding, which means winning more project grants. The user will generate a dashboard to display their analysis and use it as a tool for their continuing research.")
                , shiny::p("The county of Onondaga is alarmed by its rising fiscal deficit and the County Executive has asked her staff to look for new sources of revenue. Ms. Garcia, a public official at OCIDA, is interested in exploring publicly available federal spending data to better understand the structure of federal project grants coming into the county and to compare Onondaga to other local governments. Her main objective is to identify federal funding opportunities that the county could compete for by examining where counties similar to Onondaga have successfully found funds. Ms. Garcia is planning on using the USAspending Explorer tool to navigate through the data and produce a final report to the County Executive.")
-               #, h2("Steps:")
                , h3( strong("1. Overview of Counties in New York State using the 'Overview' Tab") )
-               # , shiny::p("The user begins by", a(" downloading data"
-               #                                    , href = "https://www.usaspending.gov/DownloadCenter/Pages/DataDownload.aspx"
-               # ) # end of hyperlink
-               # , " on FY2016 grants in New York state with the following selections:"
-               # , br()
-               # , img( src = "https://github.com/DataCapstone/Data-Capstone/raw/35fa7a046b52fd7204a2b87ed38f79e207cdac90/Raw-Data/Screen%20Shot%202017-06-09%20at%202.13.57%20PM.png"
-               #        , height = 400, width = 700
-               # ) # end of screenshot
-               # ) # end of long paragraph
                , shiny::p("From the landing tab of USAspending Explorer, the user selects NY State and locates Onondaga on the map. The scaled colors in the county map allow the user to quickly compare Onondaga County’s total and per capita federal grant funding with the other counties in NY State. The data table allows the user a more detailed look.")
                , shiny::p("The current version of USAspending Explorer uses FY 2016 data and excludes all funds going directly to state government because these funds will likely be redistributed to other localities in the state. This allows the user to compare counties more meaningfully than if funds were reported as going to a single county when they’re actually redistributed to many.")
                , shiny::p("The user quickly finds that Onondaga is ranked 13th in total grants ($101,573,642) but 18th in per capita federal grants ($216.9) received. When looking at total grants, Onondaga is similar to Nassau ($107,817,884.25) and Cattaraugus ($97,653,885), however, Nassau receives much less on a per capita as compared to Onondaga while Cattaraugus receives much more. When looking only at per capita grants received, counties like St. Lawrence ($256.98) and Richmond ($296.13) are receiving similar amounts to Onondaga.")
@@ -263,26 +251,22 @@ body <- dashboardBody(
                , h4(em("Transportation Programs"))
                , shiny::p("After filtering through the grants, Ms Garcia finds out that the Department of Transportation is providing large sums of money to St. Lawrence and Orange counties for a Program described as “Airport improvement Program”, while Onondaga is not receiving nearly as much. While this could mean that the airports in Onondaga do not need as much improvement, it might also signify that Onondaga could more aggressively pursue this funding. See the screenshot below:"
                           , br()
-                          , img( src = "https://github.com/DataCapstone/Data-Capstone/raw/master/Images/UC_datatable_airpot.JPG"
-                                   , height = 200, width = 700
+                          , img( src = "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Images/UC_datatable_airpot.JPG"
+                                   , height = 190, width = 700
                                  ) # end of first screenshot
                ) 
                , h4(em("Education Programs"))
                , shiny::p("When looking at the grants provided by the Department of Education to Orange County, Ms Garcia finds that there has been a significant amount of funding provided to a specific School District in the county. However, she quickly realizes that this funding is tied to tax exempt land in the county and isn’t an opportunity for Onondaga to compete for funds. See screenshot below:"
                           , br()
-                          , img( src = "https://github.com/DataCapstone/Data-Capstone/raw/master/Images/UC_datatable_schools.jpg"
+                          , img( src = "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Images/UC_datatable_schools.jpg"
                                  , height = 400, width = 700
                           ) # end of second screenshot)
                ) # end of second long paragraph
                , h3( strong( "5. What was Learned" ) )
                , shiny::p("Through the navigation of USAspending Explorer, Ms Garcia has learnt more about the federal funding structure in NY State and Onondaga county. Comparing Onondaga with other counties has given her more context to assess the performance of Onondaga in competing for project grants and has also allowed her to identify specific project grants that are providing similar counties with significant amounts of funds.")
                , shiny::p("Naturally, this exploratory tool generates more questions than it answers, but Ms Garcia has learned a lot about federal funding in NY State, Onondaga and other counties. Better understanding the federal funding landscape will lead Ms Garcia to make further inquiries, research more about the specific project grants that she identified, and develop a plan for how to compete for those funds in the future. Ms Garcia could also contact the counties she has been looking at and ask them about program details now that she has a better picture of what funding she is interested in.")
-               #, shiny::p("The user next identifies the primary agencies funding project grants for each recipient within the counties of interest. To do this they use the agency identifier. They now have a much fuller picture of what kinds of institutions are successfully winning federal funding within each county, and can thus tailor any further action to the particular deficiencies or strengths of each county’s federal funding portfolio. The user generates a dashboard report to display their analysis.")
+               
     ) # end of 4th tab customization
-    # 5th tab 
-    #, tabItem( tabName = "About"
-    #           , h1("We made this app! :)")
-    #) # end of 5th tab
   ) # end of Tab Items
 ) # end of dasboard body
 
