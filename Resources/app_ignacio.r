@@ -164,7 +164,7 @@ body <- dashboardBody(
                ) # end of row
                
     ) # end of second tab
-
+    
     ########################### 3. COMPARE TAB ###########################
     
     , # Third tab content
@@ -184,7 +184,7 @@ body <- dashboardBody(
                                label='Enter your county name:', 
                                choices= sort(unique(gra16.3$county)),
                                selected=c("Onondaga"))
-                             ) ) # end of box 1
+                      ) # end of box 1
               ) # end of column 1
             ) # end of row 1
             
@@ -202,23 +202,20 @@ body <- dashboardBody(
                                multiple = TRUE, 
                                options = list(maxItems = 4)
                              ) ) # end of box 1
-              ) # end of column 1
-            ) # end of row 1
-            
-            , fluidRow(
+                      ) # end of column 1
               column( width = 5
-                        , box( title = "County Demographics", status = "primary"
-                               , solidHeader = TRUE, collapse = FALSE, width = NULL
-                               , shiny::plotOutput("censusPlot")
-                        ) # end of box 2
-              ) # end of column 2
+                      , box( title = "County Demographics", status = "primary"
+                             , solidHeader = TRUE, collapse = FALSE, width = NULL
+                             , shiny::plotOutput("censusPlot")
+                      ) # end of box 2
+                      ) # end of column 2
               , column( width = 5
                         , box( title = "Grant Types by County"
                                , status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , shiny::plotOutput("percapPlot")
                         ) # end of box 3
-              ) # end of column 3
+                      ) # end of column 3
             )
             
             ##################### 3.3 ROW  ############################
@@ -292,8 +289,8 @@ body <- dashboardBody(
                , shiny::p("After filtering through the grants, Ms Garcia finds out that the Department of Transportation is providing large sums of money to St. Lawrence and Orange counties for a Program described as “Airport improvement Program”, while Onondaga is not receiving nearly as much. While this could mean that the airports in Onondaga do not need as much improvement, it might also signify that Onondaga could more aggressively pursue this funding. See the screenshot below:"
                           , br()
                           , img( src = "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Images/UC_datatable_airpot.JPG"
-                                   , height = 190, width = 700
-                                 ) # end of first screenshot
+                                 , height = 190, width = 700
+                          ) # end of first screenshot
                ) 
                , h4(em("Education Programs"))
                , shiny::p("When looking at the grants provided by the Department of Education to Orange County, Ms Garcia finds that there has been a significant amount of funding provided to a specific School District in the county. However, she quickly realizes that this funding is tied to tax exempt land in the county and isn’t an opportunity for Onondaga to compete for funds. See screenshot below:"
@@ -533,17 +530,14 @@ server <- function(input, output) {
   # Render census plot
   output$censusPlot <- shiny::renderPlot({
     
-    #################FORMATTING THE DF##########################
-    #only working with four comparatos and NY state
-    #"Matches for Onondaga: 1.Broome, 2.St. Lawrence, 3.Orange, 4.Sullivan, 5.Monroe"
-    x <- NYcen_norm$county.name %in% input$your_county
-    NYcen_norm_filter <- NYcen_norm[x,]
-    NYcen_norm_filter$county.name <- factor(NYcen_norm_filter$county.name, ordered= TRUE)
-    rownames(NYcen_norm_filter) <- 1:nrow(NYcen_norm_filter)
     
-    #################### MAKING THE BARPLOT #######################
+    #filter by county
+    county.filter <- filter(agg.pop.percap, County %in% input$your_county)
     
-    krzycensuz(NYcen_norm_filter)
+    
+    ggplot(county.filter, aes(x=County, y= percap)) + geom_bar( aes(fill=County), stat="identity")+ scale_y_continuous(position = "right", labels = scales::dollar_format(prefix="$", big.mark = ","))+ facet_grid(Agency ~ Recipient_Type, switch="y") + labs(caption = "*This chart excludes negative outlays as well as agencies that had less than 10 entries total across recipient types and counties.") + theme_minimal() + theme (strip.text.y = element_text(size=12, angle = 180), strip.text.x = element_text(size=12), plot.title = element_text(size=16), plot.subtitle = element_text(size=13), legend.position="top", legend.title = element_blank(), axis.title.x=element_blank(), legend.key.size = unit(.5, "line"), legend.text=element_text(size=12),
+                                                                                                                                                                                                                                                                                                                                                                                                                                          axis.title.y= element_blank(), axis.ticks=element_blank(), axis.text.x= element_blank(), panel.background = element_rect(colour = 'gray80'),panel.grid.minor = element_blank(), panel.grid.major =element_blank())
+    
     
   }) # end of census plot
   
