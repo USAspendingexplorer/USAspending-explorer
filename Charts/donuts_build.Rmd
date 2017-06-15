@@ -16,18 +16,9 @@ library(ggplot2)
 ########################
 #grants DF
 
-gra16 <- readRDS( gzcon(url("https://github.com/DataCapstone/Data-Capstone/blob/master/Raw-Data/NYgra16_counties_named.rds?raw=true")))
+gra16 <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYgra16_cleaned.rds?raw=true")))
 
 graTOTAL <- gra16
-
-#processing the DF
-
-#Removing state grants
-x <- gra16$recipient_type == "00: State government"
-#table(x)
-#FALSE  TRUE 
-#18695 11801
-gra16 <- gra16[!x,]
 
 options(scipen = 999)
 ```
@@ -42,6 +33,7 @@ options(scipen = 999)
 #unique(gra16$maj_agency_cat) #27 levels
 #unique(gra16$agency_name) #72 levels
 #unique(gra16$agency_code) #95 levels
+
 
 #grouping by Agencies (maj_agency_cat)
 age <- group_by(gra16, maj_agency_cat)

@@ -161,7 +161,7 @@ krzycensuz <- function (x)
 krzycensuz(x)
 ```
 
-![](census_comparator_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](census_comparator_build_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
     ## TableGrob (4 x 1) "arrange": 4 grobs
     ##   z     cells    name           grob
