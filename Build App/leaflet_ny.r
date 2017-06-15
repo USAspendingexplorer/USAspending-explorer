@@ -1,7 +1,8 @@
 #
 # Author:   Cristian Nuno
-# Date:     June 7, 2017
+# Date:     June 15, 2017
 # Purpose:  Using Leaflet for FY16 NY Federal Spending
+#           to produce an interactive map
 #
 # Load necessary packages
 library( leaflet )
@@ -105,3 +106,10 @@ ny_map <- leaflet(ny_counties) %>%
     icon = "ion-android-globe", title = "Zoom Back Out"
     , onClick = leaflet::JS("function(btn, map){ map.setZoom(7); }")
   ) )
+
+### NOTE ###
+# The legend is not available in this script. It will be in the server.r script.
+# This exclusion is made to take advantage of shiny's ability to re-render a legend
+# based on which layer - Total Spending or Per Capita Spending - the user selects
+# on the top right of the map.
+############
