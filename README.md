@@ -17,7 +17,7 @@ install.packages( c( "ggthemes", "shiny", "shinydashboard", "geojsonio"
 
 library( shiny )
 
-shiny::runGitHub(“USAspendingexplorer/USAspending-explorer”)
+shiny::runGitHub("USAspendingexplorer/USAspending-explorer")
 ```
 
 *Last updated on June 16, 2017*
