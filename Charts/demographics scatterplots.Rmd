@@ -125,3 +125,23 @@ layout(xaxis = list(title = 'Population', showticklabels=TRUE, showgrid=FALSE),
       yaxis =list(title = 'Poverty Rate', showgrid=FALSE, showticklabels=TRUE))
 ```
 
+```{r}
+hovertxt6 <- paste("County:",dem2$county.name, "
+", "Median HH Income:", dollar( dem2$MHincome )
+, "
+", "Population:", prettyNum( dem2$Pop
+                                  , big.mark = ","
+                                  , preserve.width = "none"
+                                   )
+)
+
+
+
+
+plot_ly(data = dem2, x = ~MHincome, y = ~Pop, name = "",
+        marker = list(color = "#A3A500", size = 7)) %>%
+add_markers(hoverinfo="text", text=hovertxt6) %>%
+layout(xaxis = list(title = 'Median Household Income', showticklabels=TRUE, showgrid=FALSE),
+      yaxis =list(title = 'Population', showgrid=FALSE, showticklabels=TRUE))
+```
+
