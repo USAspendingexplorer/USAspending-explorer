@@ -119,7 +119,7 @@ hovertxt5 <- paste("County:",dem2$county.name, "
 
 
 plot_ly(data = dem2, x = ~Pop, y = ~pov.rate, name = "",
-        marker = list(color = "#00C19F", size = 7)) %>%
+        marker = list(color = "#F67670", size = 7)) %>%
 add_markers(hoverinfo="text", text=hovertxt5) %>%
 layout(xaxis = list(title = 'Population', showticklabels=TRUE, showgrid=FALSE),
       yaxis =list(title = 'Poverty Rate', showgrid=FALSE, showticklabels=TRUE))
