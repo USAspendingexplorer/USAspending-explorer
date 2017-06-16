@@ -5,7 +5,7 @@ This application runs a dashboard to explore federal grant spending in FY 2016.
 You can launch this application from R using the following commands:
 
 ```
-devtools::install_github(“leaflet”)
+devtools::install_github(“rstudio/leaflet”)
 
 devtools::install_github('ramnathv/rCharts’)
 
