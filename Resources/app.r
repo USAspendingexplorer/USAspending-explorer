@@ -177,21 +177,6 @@ body <- dashboardBody(
             
             , fluidRow(
               column( width = 2
-                      , box( title = "Find Similar Counties", status = "primary"
-                             , solidHeader = TRUE, collapsible = FALSE, width = NULL
-                             , selectInput(
-                               inputId='county_to_match', 
-                               label='Enter your county name:', 
-                               choices= sort(unique(gra16.3$county)),
-                               selected=c("Onondaga"))
-                      ) # end of box 1
-              ) # end of column 1
-            ) # end of row 1
-            
-            ##################### 3.2 ROW ############################
-            
-            , fluidRow(
-              column( width = 2
                       , box( title = "County Comparison", status = "primary"
                              , solidHeader = TRUE, collapsible = FALSE, width = NULL
                              , selectizeInput(
@@ -203,17 +188,27 @@ body <- dashboardBody(
                                options = list(maxItems = 4)
                              ) ) # end of box 1
               ) # end of column 1
-              , column( width = 5
-                        , box( title = "County Demographics", status = "primary"
+            ) # end of row 1
+            
+            ##################### 3.2 ROW ############################
+            
+            , fluidRow(
+              column( width = 4
+                      , box( title = "All County Demographics", status = "primary"
+                             , solidHeader = TRUE, collapse = FALSE, width = NULL
+                             , DT::dataTableOutput("censusTable"), height = 500) # end of box 1
+              ) # end of column 1
+              , column( width = 4
+                        , box( title = "Selected County Demographics", status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
-                               , shiny::plotOutput("censusPlot")
+                               , shiny::plotOutput("censusPlot", height = 500)
                         ) # end of box 2
               ) # end of column 2
-              , column( width = 5
+              , column( width = 4
                         , box( title = "Grant Types by County"
                                , status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
-                               , shiny::plotOutput("percapPlot")
+                               , shiny::plotOutput("percapPlot", height = 500)
                         ) # end of box 3
               ) # end of column 3
             )
@@ -494,6 +489,15 @@ server <- function(input, output) {
   #######################################
   #### County Overview Shiny Elements####
   #######################################
+  
+  #Census Table
+  
+  output$censusTable <- DT::renderDataTable({
+    
+    population[,c("county.name", "Pop", "MHincome", "pov.rate")] 
+    
+  })
+  
   
   #Percapita bar plot  
   output$percapPlot <- shiny::renderPlot({
