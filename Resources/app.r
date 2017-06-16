@@ -171,23 +171,23 @@ body <- dashboardBody(
     tabItem(tabName = "Compare"
             , h2("County Comparison of Project Grant Funding")
             , shiny::p("These visuals build on the same federal grant data for New York state in FY 2016 but focus solely on project grants. Project grants are awarded for a specific purpose and based on the merit of the grant application, meaning that any variation from county to county is at least in part under the applicant’s control. This type of grant may be of more interest to users wishing to understand differences between counties than grants distributed based on a formula determined by law and often based on demographic information or less competitive block grants would be; and (3) ")
-            , shiny::p("This comparison tool is divided into three subheadings: (1) Find Similar counties, use the table and plot to identify what counties have similar demographics; (2) Choose counties to compare, select up to 4 counties in New York state, view how similar those counties are in terms of demographics and in comparison to the state average, and then view the total federal grant funding received by each county in per capita terms; (3) Grant Funding Details, you can then further examine the project grant funding received by each county broken down by the recipient type and federal agency awarding the funds.")
+            , shiny::p("The Compare Tab is divided into three sections: (1) Find Similar Counties; (2) Choose Counties to Compare; (3) View Grant Funding Details.")
             
             
             ##################### 3.1 ROW ############################
             
             , h4( strong(""))
             , h4( strong("1. Find Similar Counties"))
-            , shiny::p("Use the table with county demographics and hover over the plot to find similar counties. Data is from ACS 2015.")
+            , shiny::p("Use the county demographics table and hover over the population vs poverty plot to find similar counties. Data is from ACS 2015.")
             , fluidRow(
               column( width = 7
-                      , box( title = "All County Demographics", status = "primary"
+                      , box( title = "Demographics for All Counties", status = "primary"
                              , solidHeader = TRUE, collapse = FALSE, width = NULL
                              , DT::dataTableOutput("censusTable")
                              ) # end of box 1
               ) # end of column 1
               , column( width = 5
-                        , box( title = "Poverty vs. Population All Counties", status = "primary"
+                        , box( title = "Population vs. Poverty", status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , plotlyOutput("plotlyplot")
                         ) # end of box 2
@@ -197,10 +197,10 @@ body <- dashboardBody(
             ##################### 3.2 ROW ############################
             
             , h4( strong("2. Choose Counties to Compare"))
-            , shiny::p("Select the counties you want to compare and visualize their compared demographics and grant type structure.")
+            , shiny::p("Select the counties you want to compare and visualize their demographics and grant type structure.")
             , fluidRow(
               column( width = 2
-                      , box( title = "County Comparison", status = "primary"
+                      , box( title = "Select Counties", status = "primary"
                              , solidHeader = TRUE, collapsible = FALSE, width = NULL
                              , selectizeInput(
                                inputId='your_county', 
@@ -212,13 +212,13 @@ body <- dashboardBody(
                              ) ) # end of box 1
               ) # end of column 1
               ,column( width = 5
-                        , box( title = "Selected County Demographics", status = "primary"
+                        , box( title = "Demographics for Selected Counties", status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , shiny::plotOutput("censusPlot", height = 500)
                         ) # end of box 2
               ) # end of column 2
               , column( width = 5
-                        , box( title = "Grant Types by Selected Counties"
+                        , box( title = "Grant Types for Selected Counties"
                                , status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , shiny::plotOutput("percapPlot", height = 500)
@@ -230,7 +230,7 @@ body <- dashboardBody(
             
             , br()
             , h4( strong("3. Grant Funding Details"))
-            , shiny::p("You can then further examine the project grant funding received by each county broken down by the recipient type and federal agency awarding the funds. This allows you to identify what areas or recipients are driving the variation in funds. You can further explore the specific grants and recipients that make up any of this variation in the data table below.")
+            , shiny::p("Examine the project grant funding received by each county broken down by the recipient type and federal agency awarding the funds. This allows you to identify what areas or recipients are driving the variation in funds. You can further explore the specific grants and recipients that make up any of this variation in the data table below.")
             , fluidRow(
               column( width = 12
                       , box( title = "Federal Project Grant Funding by County, Agency, and Recipient (Per Capita)"
