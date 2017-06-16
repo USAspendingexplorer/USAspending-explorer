@@ -527,9 +527,11 @@ server <- function(input, output) {
   #Plotly plot
   output$plotlyplot <- renderPlotly({
     dem2 <- population 
+    dem2$pov.rate <- round(100*dem2$pov.rate, 1)
+    
     
     hovertxt5 <- paste("County:",dem2$county.name, "
-", "Poverty Rate:", paste(round(100*dem2$pov.rate, 1)
+", "Poverty Rate:", paste(dem2$pov.rate
                           , "%"
                           , sep=""
 )
@@ -546,8 +548,8 @@ server <- function(input, output) {
     plot_ly(data = dem2, x = ~Pop, y = ~pov.rate, name = "",
             marker = list(color = "#F67670", size = 7)) %>%
       add_markers(hoverinfo="text", text=hovertxt5) %>%
-      layout(xaxis = list(title = 'Population', showticklabels=TRUE, showgrid=FALSE),
-             yaxis =list(title = 'Poverty Rate', showgrid=FALSE, showticklabels=TRUE))
+      layout(xaxis = list(title = 'Population (millions)', showticklabels=TRUE, showgrid=FALSE),
+             yaxis =list(title = 'Poverty Rate (%)', showgrid=FALSE, showticklabels=TRUE))
     
   })
   
