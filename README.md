@@ -22,7 +22,7 @@ install.packages( c( "ggthemes", "shiny", "shinydashboard", "geojsonio"
 
 library( shiny )
 
-runUrl("https://github.com/USAspendingexplorer/USAspending-explorer/archive/master.tar.gz")
+runUrl("https://github.com/USAspendingexplorer/USAspending-explorer/archive/master.zip")
 
 shiny::runGitHub("USAspendingexplorer/USAspending-explorer")
 ```
