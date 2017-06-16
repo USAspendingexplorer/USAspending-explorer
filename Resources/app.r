@@ -176,6 +176,17 @@ body <- dashboardBody(
             ##################### 3.1 ROW ############################
             
             , fluidRow(
+              column( width = 12
+                      , box( title = "All County Demographics", status = "primary"
+                             , solidHeader = TRUE, collapse = FALSE, width = NULL
+                             , DT::dataTableOutput("censusTable")
+                             ) # end of box 1
+              ) # end of column 1
+            ) # end of row 1
+            
+            ##################### 3.2 ROW ############################
+            
+            , fluidRow(
               column( width = 2
                       , box( title = "County Comparison", status = "primary"
                              , solidHeader = TRUE, collapsible = FALSE, width = NULL
@@ -188,24 +199,14 @@ body <- dashboardBody(
                                options = list(maxItems = 4)
                              ) ) # end of box 1
               ) # end of column 1
-            ) # end of row 1
-            
-            ##################### 3.2 ROW ############################
-            
-            , fluidRow(
-              column( width = 5
-                      , box( title = "All County Demographics", status = "primary"
-                             , solidHeader = TRUE, collapse = FALSE, width = NULL
-                             , DT::dataTableOutput("censusTable"), height = 500) # end of box 1
-              ) # end of column 1
-              , column( width = 4
+              ,column( width = 5
                         , box( title = "Selected County Demographics", status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , shiny::plotOutput("censusPlot", height = 500)
                         ) # end of box 2
               ) # end of column 2
-              , column( width = 3
-                        , box( title = "Grant Types by County"
+              , column( width = 5
+                        , box( title = "Grant Types by Selected Counties"
                                , status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , shiny::plotOutput("percapPlot", height = 500)
@@ -498,23 +499,16 @@ server <- function(input, output) {
   
   output$censusTable <- DT::renderDataTable({
     
-    
     census.table <- population[,c("county.name", "Pop", "MHincome", "pov.rate")] 
-    
     census.table$Pop.rank <- rank(-census.table$Pop)
-    
     census.table$MHincome.rank <- rank(-census.table$MHincome)
-    
     census.table$pov.rate.rank <- rank(-census.table$pov.rate)
-    
     census.table$pov.rate <- round(census.table$pov.rate*100, digits = 1)
-    
-    census.table.2 <- census.table[,c("county.name", "Pop", "Pop.rank", "MHincome", "MHincome.rank", "pov.rate", "pov.rate.rank")]
+    census.table <- census.table[,c("county.name", "Pop", "Pop.rank", "MHincome", "MHincome.rank", "pov.rate", "pov.rate.rank")]
+    colnames(census.table) <- c("County", "Population", "Population Rank", "Median Household Income", "Median Household Income Rank", "Poverty Rate (%)", "Poverty Rate Rank")
 
-    colnames(census.table.2) <- c("County", "Population", "Population Rank", "Median Household Income", "Median Household Income Rank", "Poverty Rate (%)", "Poverty Rate Rank")
-        
-    census.table.2
-  })
+    census.table
+  }, options = list(lengthMenu = c(5,10), pageLength = 5))
   
   
   #Percapita bar plot  

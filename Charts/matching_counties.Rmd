@@ -33,7 +33,7 @@ source_github(url)
 
 #### A COPY OF THE FUNCTION TO WORK WITH ####
 x<-dem
-county <- "Kings"
+county <- "Onondaga"
 comparators <- 2
 i <- 1
 
@@ -66,7 +66,6 @@ krzymatch <- function(x, county= "Albany", comparators= 2)
 
 krzymatch(dem, "Onondaga", 3)
 
-class(list)
 
 
 #TRYING TO SEE THE DIFFERENT OUTPUTS
@@ -88,5 +87,91 @@ class(list)
 ```
 
 
+```{r}
+
+#### ADDING MORE CHANGES TO THE FUNCTION
+
+x<-dem
+county <- "Onondaga"
+comparators <- 2
+i <- 1
+Pop <- TRUE
+Poverty <- TRUE
+Income <- FALSE
+
+krzymatch <- function(x, county= "Albany", comparators= 2, Pop = TRUE, Poverty = TRUE, Income = FALSE) 
+  {
+  # Load Required Packages
+  require(MatchIt)  
+  
+  #assigning the selected county into the treatment group
+  tmp <- x$county.name == county
+  x$Treat <- 0
+  x$Treat[tmp] <- 1
+  
+  #creating objects
+  lis <- rep(NA,comparators)
+  
+  #loop to find the top comparatos
+  if (Pop == TRUE && Poverty == FALSE && Income = FALSE) {
+    for (i in c(1:comparators)){
+      mat <- matchit(x$Treat ~  Pop, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+    } 
+  } else 
+      lis <- "Not valid"
+  
+  return(lis)
+  }
 
 
+
+krzymatch(dem, "Onondaga", 3, Pop = TRUE, Poverty = TRUE, Income = FALSE)
+
+
+```
+
+if(Pop == TRUE & Poverty == TRUE & Income = FALSE) 
+      {
+      mat <- matchit(x$Treat ~  Pop + pov.rate, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+      }
+    else if (Pop == TRUE & Poverty == FALSE & Income = TRUE) 
+      {
+      mat <- matchit(x$Treat ~  Pop + MHincome, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+      }
+    else if (Pop == TRUE & Poverty == TRUE & Income = TRUE) 
+      {
+      mat <- matchit(x$Treat ~  Pop + pov.rate + MHincome, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+      }
+    else if (Pop == FALSE & Poverty == TRUE & Income = FALSE) 
+      {
+      mat <- matchit(x$Treat ~  pov.rate, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+      }
+    else if (Pop == FALSE & Poverty == TRUE & Income = TRUE) 
+      {
+      mat <- matchit(x$Treat ~  pov.rate + MHincome, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+      }
+    else if (Pop == FALSE & Poverty == FALSE & Income = TRUE) 
+      {
+      mat <- matchit(x$Treat ~  MHincome, data = x)
+      tmp <- as.numeric(mat$match.matrix)
+      lis[i] <- as.character(x$county.name[tmp])
+      x <- x[-tmp,]
+      }
