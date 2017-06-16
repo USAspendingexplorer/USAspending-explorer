@@ -170,22 +170,34 @@ body <- dashboardBody(
     , # Third tab content
     tabItem(tabName = "Compare"
             , h2("County Comparison of Project Grant Funding")
-            , shiny::p("These visuals build on the same federal grant data for New York state in FY 2016 but focus solely on project grants. Project grants are awarded for a specific purpose and based on the merit of the grant application, meaning that any variation from county to county is at least in part under the applicant’s control. This type of grant may be of more interest to users wishing to understand differences between counties than grants distributed based on a formula determined by law and often based on demographic information or less competitive block grants would be.")
-            , shiny::p("This comparison tool allows you to select up to 4 counties in New York state, view how similar those counties are in terms of demographics and in comparison to the state average, and then view the total federal grant funding received by each county in per capita terms.")
+            , shiny::p("These visuals build on the same federal grant data for New York state in FY 2016 but focus solely on project grants. Project grants are awarded for a specific purpose and based on the merit of the grant application, meaning that any variation from county to county is at least in part under the applicant’s control. This type of grant may be of more interest to users wishing to understand differences between counties than grants distributed based on a formula determined by law and often based on demographic information or less competitive block grants would be; and (3) ")
+            , shiny::p("This comparison tool is divided into three subheadings: (1) Find Similar counties, use the table and plot to identify what counties have similar demographics; (2) Choose counties to compare, select up to 4 counties in New York state, view how similar those counties are in terms of demographics and in comparison to the state average, and then view the total federal grant funding received by each county in per capita terms; (3) Grant Funding Details, you can then further examine the project grant funding received by each county broken down by the recipient type and federal agency awarding the funds.")
+            
             
             ##################### 3.1 ROW ############################
             
+            , h4( strong(""))
+            , h4( strong("1. Find Similar Counties"))
+            , shiny::p("Use the table with county demographics and hover over the plot to find similar counties. Data is from ACS 2015.")
             , fluidRow(
-              column( width = 12
+              column( width = 7
                       , box( title = "All County Demographics", status = "primary"
                              , solidHeader = TRUE, collapse = FALSE, width = NULL
                              , DT::dataTableOutput("censusTable")
                              ) # end of box 1
               ) # end of column 1
+              , column( width = 5
+                        , box( title = "Population vs. Poverty All Counties", status = "primary"
+                               , solidHeader = TRUE, collapse = FALSE, width = NULL
+                               , plotlyOutput("plotlyplot")
+                        ) # end of box 2
+              ) # end of column 2
             ) # end of row 1
             
             ##################### 3.2 ROW ############################
             
+            , h4( strong("2. Choose Counties to Compare"))
+            , shiny::p("Select the counties you want to compare and visualize their compared demographics and grant type structure.")
             , fluidRow(
               column( width = 2
                       , box( title = "County Comparison", status = "primary"
@@ -217,6 +229,7 @@ body <- dashboardBody(
             ##################### 3.3 ROW  ############################
             
             , br()
+            , h4( strong("3. Grant Funding Details"))
             , shiny::p("You can then further examine the project grant funding received by each county broken down by the recipient type and federal agency awarding the funds. This allows you to identify what areas or recipients are driving the variation in funds. You can further explore the specific grants and recipients that make up any of this variation in the data table below.")
             , fluidRow(
               column( width = 12
@@ -508,8 +521,29 @@ server <- function(input, output) {
     colnames(census.table) <- c("County", "Population", "Population Rank", "Median Household Income", "Median Household Income Rank", "Poverty Rate (%)", "Poverty Rate Rank")
 
     census.table
-  }, options = list(lengthMenu = c(5,10), pageLength = 5))
+  }, options = list(lengthMenu = c(5,10), pageLength = 5, scrollX = TRUE))
   
+  
+  #Plotly plot
+  output$plotlyplot <- renderPlotly({
+    dem2 <- population 
+    
+    hovertxt <- paste( "County:", dem2$county.name
+                       , "
+                       "
+                       , "Population:", prettyNum( dem2$Pop
+                                                   , big.mark = ","
+                                                   , preserve.width = "none"
+                       )
+    )
+    
+    plot_ly(data = dem2, x = ~county.name, y = ~Pop, name = "",
+            marker = list(color = "#F67670", size = 7))%>%
+      add_markers(hoverinfo="text", text=hovertxt) %>%
+      layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
+             yaxis = list(title = 'Population', showgrid=FALSE))
+    
+  })
   
   #Percapita bar plot  
   output$percapPlot <- shiny::renderPlot({
