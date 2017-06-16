@@ -25,6 +25,7 @@ library( ggplot2 )
 library( igraph )
 library( networkD3 )
 library( rCharts )
+library( pander )
 
 # Import data from github function
 source_github <- function( url ) {
@@ -125,7 +126,7 @@ body <- dashboardBody(
     
     , tabItem( tabName = "Explore"
                , h2("County Explorer") # blank space
-               , shiny::p("This diagram shows the flow of funding from funding agencies to recipients with widths proportional to the amount of funding. For simplicity it displays the top 10 funding agencies in each county and groups all other agencies into an other category.")
+               , shiny::p("This diagram shows the flow of funding from funding agencies to recipients with widths proportional to the amount of funding. For simplicity it displays the top 10 funding agencies in each county and groups all other agencies into an other category. It includes only positive outlays.")
                , br()
                , fluidRow(
                  column( width = 2
@@ -170,8 +171,8 @@ body <- dashboardBody(
     , # Third tab content
     tabItem(tabName = "Compare"
             , h2("County Comparison of Project Grant Funding")
-            , shiny::p("These visuals build on the same federal grant data for New York state in FY 2016 but focus solely on project grants. Project grants are awarded for a specific purpose and based on the merit of the grant application, meaning that any variation from county to county is at least in part under the applicant’s control. This type of grant may be of more interest to users wishing to understand differences between counties than grants distributed based on a formula determined by law and often based on demographic information or less competitive block grants would be; and (3) ")
-            , shiny::p("The Compare Tab is divided into three sections: (1) Find Similar Counties; (2) Choose Counties to Compare; (3) View Grant Funding Details.")
+            , shiny::p("In this section you can compare project grant funding patterns across counties. The following visuals build on the same federal grant data for New York state in FY 2016 but focus solely on project grants. Project grants are awarded for a specific purpose and based on the merit of the grant application, meaning that any variation from county to county is at least in part under the applicant’s control. This type of grant may be of more interest to users wishing to understand differences between counties than grants distributed based on a formula determined by law and often based on demographic information or less competitive block grants would be.")
+            , shiny::p("The Compare Tab is divided into three sections: (1) Find Similar Counties; (2) Choose Counties to Compare; and (3) View Grant Funding Details.")
             
             
             ##################### 3.1 ROW ############################
@@ -229,7 +230,7 @@ body <- dashboardBody(
             ##################### 3.3 ROW  ############################
             
             , br()
-            , h4( strong("3. Grant Funding Details"))
+            , h4( strong("3. View Grant Funding Details"))
             , shiny::p("Examine the project grant funding received by each county broken down by the recipient type and federal agency awarding the funds. This allows you to identify what areas or recipients are driving the variation in funds. You can further explore the specific grants and recipients that make up any of this variation in the data table below.")
             , fluidRow(
               column( width = 12
