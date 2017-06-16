@@ -193,7 +193,7 @@ body <- dashboardBody(
             ##################### 3.2 ROW ############################
             
             , fluidRow(
-              column( width = 4
+              column( width = 5
                       , box( title = "All County Demographics", status = "primary"
                              , solidHeader = TRUE, collapse = FALSE, width = NULL
                              , DT::dataTableOutput("censusTable"), height = 500) # end of box 1
@@ -204,7 +204,7 @@ body <- dashboardBody(
                                , shiny::plotOutput("censusPlot", height = 500)
                         ) # end of box 2
               ) # end of column 2
-              , column( width = 4
+              , column( width = 3
                         , box( title = "Grant Types by County"
                                , status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
@@ -470,6 +470,8 @@ server <- function(input, output) {
       # do not filter by county
       gra16.all <- filter( gra16.3, fed_funding_amount > 0 )
       # display the table
+      colnames(gra16.all) <- c("Recipient Type", "County", "Funding", "Agency", "Assistance Type", "Recipient Name", "Program")
+      
       gra16.all
     } else {
       # filter only positive outlays
@@ -481,6 +483,8 @@ server <- function(input, output) {
                           #, maj_agency_cat == input$maj
       )
       # call the table
+      colnames(gra16.all) <- c("Recipient Type", "County", "Funding", "Agency", "Assistance Type", "Recipient Name", "Program")
+      
       gra16.all
     } # end of else
   })
@@ -494,8 +498,22 @@ server <- function(input, output) {
   
   output$censusTable <- DT::renderDataTable({
     
-    population[,c("county.name", "Pop", "MHincome", "pov.rate")] 
     
+    census.table <- population[,c("county.name", "Pop", "MHincome", "pov.rate")] 
+    
+    census.table$Pop.rank <- rank(-census.table$Pop)
+    
+    census.table$MHincome.rank <- rank(-census.table$MHincome)
+    
+    census.table$pov.rate.rank <- rank(-census.table$pov.rate)
+    
+    census.table$pov.rate <- round(census.table$pov.rate*100, digits = 1)
+    
+    census.table.2 <- census.table[,c("county.name", "Pop", "Pop.rank", "MHincome", "MHincome.rank", "pov.rate", "pov.rate.rank")]
+
+    colnames(census.table.2) <- c("County", "Population", "Population Rank", "Median Household Income", "Median Household Income Rank", "Poverty Rate (%)", "Poverty Rate Rank")
+        
+    census.table.2
   })
   
   
@@ -581,6 +599,8 @@ server <- function(input, output) {
                       , maj_agency_cat == input$maj
     )
     # call the table
+    colnames(gra16.4) <- c("Recipient Type", "County", "Funding", "Agency", "Assistance Type", "Recipient Name", "Program")
+    
     gra16.4
   })
   
