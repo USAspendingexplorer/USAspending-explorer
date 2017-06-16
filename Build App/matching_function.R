@@ -8,7 +8,6 @@
 krzymatch <- function(x, county= "Albany", comparators= 2) 
 {
   # Load Required Packages
-  require(ggplot2)
   require(MatchIt)  
   
   #assigning the selected county into the treatment group
@@ -23,10 +22,10 @@ krzymatch <- function(x, county= "Albany", comparators= 2)
   #loop to find the top comparatos
   for (i in c(1:comparators)) 
   {
-    mat <- matchit(x$Treat ~  Pop + MHincome + pov.rate, data = dat, discard = dis)
+    mat <- matchit(x$Treat ~  Pop + pov.rate, data = dat, discard = dis)
     tmp <- as.numeric(mat$match.matrix)
     dis[tmp] <- TRUE
-    lis[i] <- x$county.name[tmp]
+    lis[i] <- as.character(x$county.name[tmp])
   }
   return(lis)
 }
