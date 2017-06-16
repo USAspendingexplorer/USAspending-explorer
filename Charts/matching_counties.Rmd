@@ -35,6 +35,7 @@ source_github(url)
 x<-dem
 county <- "Kings"
 comparators <- 2
+i <- 1
 
 krzymatch <- function(x, county= "Albany", comparators= 2) 
 {
@@ -48,21 +49,22 @@ krzymatch <- function(x, county= "Albany", comparators= 2)
   
   #creating objects
   lis <- rep(NA,comparators)
-  dis <- c(rep(FALSE, 62), TRUE)
   
   #loop to find the top comparatos
   for (i in c(1:comparators)) 
   {
-    mat <- matchit(x$Treat ~  Pop + pov.rate, data = dat, discard = dis)
+    mat <- matchit(x$Treat ~  Pop + pov.rate, data = x)
     tmp <- as.numeric(mat$match.matrix)
-    dis[tmp] <- TRUE
     lis[i] <- as.character(x$county.name[tmp])
+    x <- x[-tmp,]
+    
   }
   return(lis)
 }
 
 
-list<- krzymatch(dem, "Onondaga", 3)
+
+krzymatch(dem, "Onondaga", 3)
 
 class(list)
 
