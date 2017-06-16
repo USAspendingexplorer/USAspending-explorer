@@ -1,8 +1,8 @@
-donuts yummy
+Donuts chart iterations
 ================
 
-USING PIE FUNCTION and exploring both total and no state grants for NY
-======================================================================
+Using the pie fuction in R and exploring both total and no state grants for NY
+==============================================================================
 
 Main Federal Funding Agencies in NY
 -----------------------------------
@@ -53,13 +53,7 @@ pieT <- arrange(pieT, desc(Fed))
 col <- c("#4979FF", "#FF9858",  "#8DFFFF", "#FF84FF", "#55D473", "#FFFF78", "grey80")
 
 #plotting pies
-plot.new()
 par(mfrow = c(1,2), mar=c(1,1,1,1))
-```
-
-![](donuts_build_files/figure-markdown_github/unnamed-chunk-1-2.png)
-
-``` r
 pie <- pie
 pie(as.numeric(pie$Fed), labels = paste0(pie$maj_agency_cat, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Main Federal Funding Agencies in NY", cex= .7, col=col)
 
@@ -67,7 +61,7 @@ pie<- pieT
 pie(as.numeric(pie$Fed), labels = paste0(pie$maj_agency_cat, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Including State Government", cex= .7, col=col)
 ```
 
-![](donuts_build_files/figure-markdown_github/unnamed-chunk-1-3.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 Federal Funding by Recipient Types (recip\_cat\_type)
 -----------------------------------------------------
@@ -99,13 +93,7 @@ barplot(recT$Fed/1000000, names.arg = recT$recip_cat_type, las = 2, cex.names = 
 #pie chart!
 col <- c("#4979FF", "#FF9858",  "#8DFFFF", "#FF84FF", "#55D473", "#FFFF78", "grey80")
 
-plot.new()
 par(mfrow = c(1,2), mar=c(1,1,1,1))
-```
-
-![](donuts_build_files/figure-markdown_github/unnamed-chunk-2-2.png)
-
-``` r
 pie <- rec
 pie(as.numeric(pie$Fed), labels = paste0(pie$recip_cat_type, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Federal Funding by Recipient Types", cex= .7, col=col)
 
@@ -113,10 +101,10 @@ pie<- recT
 pie(as.numeric(pie$Fed), labels = paste0(pie$recipient_name, "\n" , round(pie$Fed/sum(pie$Fed)*100, digits=1), "%"), main = "Including State Government", cex= .7, col=col)
 ```
 
-![](donuts_build_files/figure-markdown_github/unnamed-chunk-2-3.png)
+![](donuts_build_files/figure-markdown_github/unnamed-chunk-2-2.png)
 
-USING DONUTZZ FUNCTION: Major Agencies in NY State
-==================================================
+Using the donutz function (ggplot2)
+===================================
 
 First we need to create a function to read functions from github into Rstudio:
 
@@ -132,8 +120,8 @@ source_github <- function( url ) {
 } 
 
 #load the donutzz function using the RAW link
-source_github("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Charts/donut.R")
-source_github("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Charts/donut_multi.R")
+source_github("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Charts/Additional%20Charts/Donut%20Charts/donut.R")
+source_github("https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Charts/Additional%20Charts/Donut%20Charts/donut_multi.R")
 ```
 
 Now we need a data frame.

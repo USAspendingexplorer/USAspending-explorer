@@ -1,5 +1,5 @@
 ---
-title: "Census comp"
+title: "Census comparator build"
 output: github_document
 html_document:
   df_print: paged
@@ -148,8 +148,6 @@ krzycensuz(x)
 
 
 
-
-
 ```{r}
  
 population <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYcensus.rds?raw=true")))
@@ -173,6 +171,8 @@ population <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspen
 #################### MAKING THE table #######################
 #install.packages("formattable")
 library(formattable)
+
+x <- dem
 
 x <- x[,c("county.name", "Pop", "MHincome", "pov.rate")]
 x$Pop <- accounting(x$Pop, digits = 0)
