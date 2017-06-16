@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r}
+```{r, warning=FALSE}
 library(shiny)
 library(shinydashboard)
 library(dplyr)
@@ -22,22 +22,28 @@ library(plotly)
 dem <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYcensus.rds?raw=true")))
 
 # select only necessary columns
-dem2<-select(dem, county.name, Pop, MHincome, pov.rate)
+dem2 <-select(dem, county.name, Pop, MHincome, pov.rate)
 
-dem2 <- mutate(dem2, pov.rate = paste(round(100*pov.rate, 1), "%", sep=""))
+#dem2.1 <- mutate(dem2, pov.rate = paste(round(100*pov.rate, 1), "%", sep=""))
 
-dem2 <- mutate(dem2, MHincome = paste("$",format(MHincome, big.mark=","),sep=""))
+#dem2.1.1 <- mutate(dem2.1, MHincome = paste("$",format(MHincome, big.mark=","),sep=""))
 
 
 ```
 
 
 ```{r}
-hovertxt <- paste("County:",dem2$county.name, "
-", "Population:",dem2$Pop)
+hovertxt <- paste( "County:", dem2$county.name
+                   , "
+                   "
+                   , "Population:", prettyNum( dem2$Pop
+                                               , big.mark = ","
+                                               , preserve.width = "none"
+                                               )
+                             )
 
 plot_ly(data = dem2, x = ~county.name, y = ~Pop, name = "",
-        marker = list(color = "#737373", size = 7))%>%
+        marker = list(color = "#F67670", size = 7))%>%
 add_markers(hoverinfo="text", text=hovertxt) %>%
 layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
       yaxis = list(title = 'Population', showgrid=FALSE))
@@ -45,14 +51,15 @@ layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
 
 
 ```{r}
+library(scales)
 hovertxt2 <- paste("County:",dem2$county.name, "
-", "Median Household Income:",dem2$MHincome)
+", "Median Household Income:", dollar( dem2$MHincome ) )
 
 plot_ly(data = dem2, x = ~county.name, y = ~MHincome, name = "",
-        marker = list(color = "#737373", size = 7))%>%
+        marker = list(color = "#1BB841", size = 7))%>%
 add_markers(hoverinfo="text", text=hovertxt2) %>%
 layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
-      yaxis = list(title = 'Median Household Income', showgrid=FALSE, showticklabels=FALSE))
+      yaxis = list(title = 'Median Household Income', showgrid=FALSE, showticklabels=TRUE))
 
 
 ```
@@ -60,15 +67,18 @@ layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
 
 ```{r}
 hovertxt3 <- paste("County:",dem2$county.name, "
-", "Poverty Rate:",dem2$pov.rate)
+", "Poverty Rate:", paste(round(100*dem2$pov.rate, 1)
+                          , "%"
+                          , sep=""
+                          )
+)
 
 plot_ly(data = dem2, x = ~county.name, y = ~pov.rate, name = "",
-        marker = list(color = "#737373", size = 7))%>%
+        marker = list(color = "#649EFC", size = 7))%>%
 add_markers(hoverinfo="text", text=hovertxt3) %>%
 layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
-      yaxis =list(title = 'Poverty Rate', showgrid=FALSE, showticklabels=FALSE))
+      yaxis =list(title = 'Poverty Rate', showgrid=FALSE, showticklabels=TRUE))
 
 
 ```
-
 
