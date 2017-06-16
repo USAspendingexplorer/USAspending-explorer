@@ -1,0 +1,74 @@
+---
+title: "match shiny"
+runtime: shiny
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(shiny)
+library(DT)
+library(dplyr)
+
+```
+
+```{r}
+
+source_github <- function( url ) {
+  # load package
+  require(RCurl)
+  
+  # read script lines from website and evaluate
+  script <- getURL(url, ssl.verifypeer = FALSE)
+  eval(parse(text = script), envir=.GlobalEnv)
+} 
+
+
+match_url <- "https://raw.githubusercontent.com/USAspendingexplorer/USAspending-explorer/master/Build%20App/matching_function.R"
+
+source_github(match_url)
+
+```
+
+```{r}
+
+#Load cleaned NYFY16 data
+dem <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYcensus.rds?raw=true")))
+
+ui <- fluidPage(
+      selectizeInput(
+        inputId='match_county', 
+            label='Select a county:', 
+            choices= sort((dem$county.name)),
+            selected=c("Onondaga")
+        ),
+      
+  
+  DT::dataTableOutput("matchTable")
+  
+  ) 
+
+
+server <- function(input, output) {
+  
+  output$matchTable <- DT::renderDataTable({
+  
+  #put input$match_county and input$match_characteristic into matchit
+    
+  matched <- krzymatch(dem, input$match_county, 3)
+  
+  compare <- filter(dem, county.name %in% matched)
+
+  compare
+    
+  })
+
+ 
+} 
+
+shinyApp(ui= ui , server = server)
+
+
+```
+
