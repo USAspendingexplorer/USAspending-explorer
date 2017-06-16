@@ -25,6 +25,7 @@ library( ggplot2 )
 library( igraph )
 library( networkD3 )
 library( rCharts )
+library( pander )
 
 # Import data from github function
 source_github <- function( url ) {
