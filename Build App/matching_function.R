@@ -22,7 +22,7 @@ krzymatch <- function(x, county= "Albany", comparators= 2)
   #loop to find the top comparatos
   for (i in c(1:comparators)) 
   {
-    mat <- matchit(x$Treat ~  Pop + pov.rate, data = dat, discard = dis)
+    mat <- matchit(x$Treat ~  Pop + pov.rate, data = x, discard = dis)
     tmp <- as.numeric(mat$match.matrix)
     dis[tmp] <- TRUE
     lis[i] <- as.character(x$county.name[tmp])
