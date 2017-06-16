@@ -530,14 +530,15 @@ server <- function(input, output) {
   # Render census plot
   output$censusPlot <- shiny::renderPlot({
     
+    #################### FILTERING THE DATA #######################
     
-    #filter by county
-    county.filter <- filter(agg.pop.percap, County %in% input$your_county)
+    x <- population$county.name %in% input$your_county
+    population_plot_filter <- population[x,]
+    population_plot_filter$county.name <- factor(population_plot_filter$county.name, ordered= TRUE)
     
-    
-    ggplot(county.filter, aes(x=County, y= percap)) + geom_bar( aes(fill=County), stat="identity")+ scale_y_continuous(position = "right", labels = scales::dollar_format(prefix="$", big.mark = ","))+ facet_grid(Agency ~ Recipient_Type, switch="y") + labs(caption = "*This chart excludes negative outlays as well as agencies that had less than 10 entries total across recipient types and counties.") + theme_minimal() + theme (strip.text.y = element_text(size=12, angle = 180), strip.text.x = element_text(size=12), plot.title = element_text(size=16), plot.subtitle = element_text(size=13), legend.position="top", legend.title = element_blank(), axis.title.x=element_blank(), legend.key.size = unit(.5, "line"), legend.text=element_text(size=12),
-                                                                                                                                                                                                                                                                                                                                                                                                                                          axis.title.y= element_blank(), axis.ticks=element_blank(), axis.text.x= element_blank(), panel.background = element_rect(colour = 'gray80'),panel.grid.minor = element_blank(), panel.grid.major =element_blank())
-    
+    #################### MAKING THE BARPLOT #######################
+      
+    krzycensuz(population_plot_filter)
     
   }) # end of census plot
   

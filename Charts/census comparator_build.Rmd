@@ -28,7 +28,7 @@ x <- dat$county.name %in% c("Onondaga", "Broome", "St. Lawrence", "Sullivan")
 
 dat <- dat[x,]
 dat$county.name <- factor(dat$county.name, ordered= TRUE)
-rownames(dat) <- 1:nrow(dat)
+
 
 ```
 
@@ -146,6 +146,26 @@ krzycensuz(x)
 
 ```
 
+
+
+
+
+```{r}
+ 
+population <- readRDS( gzcon(url("https://github.com/USAspendingexplorer/USAspending-explorer/blob/master/Data/Processed/NYcensus.rds?raw=true")))
+
+#################### FILTERING THE DATA #######################
+    
+    x <- population$county.name %in% c("Onondaga", "Broome", "St. Lawrence", "Sullivan")
+    population_plot_filter <- population[x,]
+    population_plot_filter$county.name <- factor(population_plot_filter$county.name, ordered= TRUE)
+    
+    #################### MAKING THE BARPLOT #######################
+      
+    krzycensuz(population_plot_filter)
+    
+    
+```
 
 #An alternative that gor discarded: display using a table
 
