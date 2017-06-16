@@ -6,6 +6,7 @@ With USAspending Explorer, you can understand how tax dollars are spent, explore
 
 Explore the our GitHub Repository to find the code for producing the visualizations and running the shiny app.
 
+
 ## To launch this application use the following commands in R:
 
 ```R
@@ -24,6 +25,7 @@ library( shiny )
 shiny::runGitHub("USAspendingexplorer/USAspending-explorer")
 ```
 
+
 ## Screenshots of USAspending-explorer tabs:
 
 ![](https://github.com/USAspendingexplorer/USAspending-explorer/raw/master/Images/Screenshots/Screen%20Shot%202017-06-16%20at%202.57.19%20PM.png)
@@ -41,10 +43,10 @@ shiny::runGitHub("USAspendingexplorer/USAspending-explorer")
 
 ## Collaborators:
 
-Cristian Nuno (https://github.com/cenuno)
-Ignacio Pezo (https://github.com/icps86)
-Linnea Powell (https://github.com/lpowell12)
-Stephanie Wilcoxen (https://github.com/swilcoxen)
+* Cristian Nuno (https://github.com/cenuno)
+* Ignacio Pezo (https://github.com/icps86)
+* Linnea Powell (https://github.com/lpowell12)
+* Stephanie Wilcoxen (https://github.com/swilcoxen)
 
 
 *Last updated on June 16, 2017*
