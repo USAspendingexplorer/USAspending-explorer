@@ -48,5 +48,9 @@ shiny::runUrl("https://github.com/USAspendingexplorer/USAspending-explorer/archi
 * Linnea Powell (https://github.com/lpowell12)
 * Stephanie Wilcoxen (https://github.com/swilcoxen)
 
+## Capstone Supervisor
+
+* Jesse Lecy, PhD (https://github.com/lecy)
+
 
 *Last updated on June 16, 2017*
