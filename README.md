@@ -2,6 +2,8 @@
 
 This application runs a dashboard to explore federal grant spending in FY 2016.
 
+![](https://github.com/USAspendingexplorer/USAspending-explorer/raw/master/Images/Screenshots/Screen%20Shot%202017-06-16%20at%202.57.19%20PM.png)
+
 You can launch this application from R using the following commands:
 
 ```
