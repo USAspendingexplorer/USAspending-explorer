@@ -187,7 +187,7 @@ body <- dashboardBody(
                              ) # end of box 1
               ) # end of column 1
               , column( width = 5
-                        , box( title = "Population vs. Poverty All Counties", status = "primary"
+                        , box( title = "Poverty vs. Population All Counties", status = "primary"
                                , solidHeader = TRUE, collapse = FALSE, width = NULL
                                , plotlyOutput("plotlyplot")
                         ) # end of box 2
@@ -528,20 +528,26 @@ server <- function(input, output) {
   output$plotlyplot <- renderPlotly({
     dem2 <- population 
     
-    hovertxt <- paste( "County:", dem2$county.name
-                       , "
-                       "
-                       , "Population:", prettyNum( dem2$Pop
-                                                   , big.mark = ","
-                                                   , preserve.width = "none"
-                       )
+    hovertxt5 <- paste("County:",dem2$county.name, "
+", "Poverty Rate:", paste(round(100*dem2$pov.rate, 1)
+                          , "%"
+                          , sep=""
+)
+, "
+", "Population:", prettyNum( dem2$Pop
+                             , big.mark = ","
+                             , preserve.width = "none"
+    )
     )
     
-    plot_ly(data = dem2, x = ~county.name, y = ~Pop, name = "",
-            marker = list(color = "#F67670", size = 7))%>%
-      add_markers(hoverinfo="text", text=hovertxt) %>%
-      layout(xaxis = list(title = 'County', showticklabels=FALSE, showgrid=FALSE),
-             yaxis = list(title = 'Population', showgrid=FALSE))
+    
+    
+    
+    plot_ly(data = dem2, x = ~Pop, y = ~pov.rate, name = "",
+            marker = list(color = "#F67670", size = 7)) %>%
+      add_markers(hoverinfo="text", text=hovertxt5) %>%
+      layout(xaxis = list(title = 'Population', showticklabels=TRUE, showgrid=FALSE),
+             yaxis =list(title = 'Poverty Rate', showgrid=FALSE, showticklabels=TRUE))
     
   })
   
